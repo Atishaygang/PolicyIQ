@@ -1,0 +1,9 @@
+CHUNK_SIZE = 1000
+CHUNK_OVERLAP = 200
+
+TOP_K = 4
+
+EMBEDDING_MODEL = "..."
+LLM_MODEL = "..."
+
+VECTOR_DB = "chroma"

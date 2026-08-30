@@ -1,0 +1,467 @@
+{
+  "dataset_name": "policyiq_golden_eval_v1",
+  "version": "1.0",
+  "purpose": "Golden evaluation set for PolicyIQ RAG retrieval, grounding, citation and abstention testing.",
+  "corpus_scope": {
+    "documents_used": [
+      {
+        "document_id": "DOC001",
+        "filename": "1_motor_policy.pdf",
+        "title": "HDFC ERGO Standalone Motor Own Damage Cover - Private Cars"
+      },
+      {
+        "document_id": "DOC002",
+        "filename": "2_motor_policy.pdf",
+        "title": "HDFC ERGO Two Wheeler Package Policy - Annual"
+      },
+      {
+        "document_id": "DOC003",
+        "filename": "3_motor_policy.pdf",
+        "title": "HDFC ERGO Private Car Policy - Bundled"
+      },
+      {
+        "document_id": "DOC004",
+        "filename": "1_health_policy.pdf",
+        "title": "HDFC ERGO my: Optima Secure"
+      },
+      {
+        "document_id": "DOC005",
+        "filename": "IRDAI (Insurance Products) Regulations, 2024.pdf",
+        "title": "IRDAI (Insurance Products) Regulations, 2024"
+      },
+      {
+        "document_id": "DOC006",
+        "filename": "IRDAI (Protection of Policyholder's Interests, operations and allied matters of insurers) Regulations, 2024.pdf",
+        "title": "IRDAI Protection of Policyholders' Interests Regulations, 2024"
+      },
+      {
+        "document_id": "DOC007",
+        "filename": "IRDAI (Rural, social sector and Motor third party obligations) Regulations, 2024.pdf",
+        "title": "IRDAI Rural, Social Sector and Motor Third Party Obligations Regulations, 2024"
+      },
+      {
+        "document_id": "DOC008",
+        "filename": "Master Circular on Recent Developments in Motor Insurance products bearing.pdf",
+        "title": "IRDAI Master Circular regarding Motor Insurance Products"
+      },
+      {
+        "document_id": "DOC009",
+        "filename": "Motor Insurance_FAQ.pdf",
+        "title": "IRDAI Motor Insurance FAQ"
+      }
+    ],
+    "note": "Questions were built only from the nine uploaded documents listed above. Missing/not-uploaded documents were not used."
+  },
+  "category_counts": {
+    "exact": 7,
+    "semantic": 7,
+    "multi_document": 5,
+    "unanswerable": 5,
+    "total": 24
+  },
+  "questions": [
+    {
+      "question_id": "Q001",
+      "category": "exact",
+      "difficulty": "easy",
+      "question": "At what repair or retrieval cost threshold is a private car treated as a Constructive Total Loss under the bundled policy?",
+      "answerable": true,
+      "expected_answer": "The vehicle is treated as a Constructive Total Loss when the aggregate retrieval and/or repair cost exceeds 75% of the vehicle's IDV, subject to the policy terms and conditions.",
+      "expected_topic": "constructive total loss threshold",
+      "expected_evidence": [
+        {
+          "document_id": "DOC003",
+          "page": 2,
+          "section": "Insured's Declared Value / CTL",
+          "evidence_summary": "CTL applies when aggregate retrieval and/or repair cost exceeds 75% of IDV."
+        }
+      ]
+    },
+    {
+      "question_id": "Q002",
+      "category": "exact",
+      "difficulty": "easy",
+      "question": "What percentage depreciation applies to rubber, nylon, plastic parts, tyres, tubes, batteries and air bags under the standalone private car own-damage policy?",
+      "answerable": true,
+      "expected_answer": "50% depreciation applies to those parts.",
+      "expected_topic": "parts depreciation",
+      "expected_evidence": [
+        {
+          "document_id": "DOC001",
+          "page": 1,
+          "section": "Section I - Loss of or Damage to the Vehicle Insured",
+          "evidence_summary": "Rubber/nylon/plastic parts, tyres, tubes, batteries and air bags are subject to 50% depreciation."
+        }
+      ]
+    },
+    {
+      "question_id": "Q003",
+      "category": "exact",
+      "difficulty": "easy",
+      "question": "How soon must HDFC ERGO be notified of an emergency hospitalization under the Optima Secure policy?",
+      "answerable": true,
+      "expected_answer": "Notice with full particulars must be sent within 24 hours from the date emergency hospitalization is required or before discharge, whichever is earlier.",
+      "expected_topic": "health claim notification",
+      "expected_evidence": [
+        {
+          "document_id": "DOC004",
+          "page": 49,
+          "section": "Claims Procedure - Notification of a Claim",
+          "evidence_summary": "Emergency hospitalization must be notified within 24 hours or before discharge, whichever is earlier."
+        }
+      ]
+    },
+    {
+      "question_id": "Q004",
+      "category": "exact",
+      "difficulty": "easy",
+      "question": "What is the free-look period for a new individual Optima Secure health insurance policy?",
+      "answerable": true,
+      "expected_answer": "30 days from the date of receipt of the policy document.",
+      "expected_topic": "free look period",
+      "expected_evidence": [
+        {
+          "document_id": "DOC004",
+          "page": 37,
+          "section": "Free Look Period",
+          "evidence_summary": "A 30-day free-look period applies to new individual health policies, not renewals or porting/migration."
+        }
+      ]
+    },
+    {
+      "question_id": "Q005",
+      "category": "exact",
+      "difficulty": "easy",
+      "question": "According to IRDAI's Motor Insurance FAQ, what is the maximum No Claim Bonus percentage mentioned for successive claim-free years?",
+      "answerable": true,
+      "expected_answer": "The FAQ states that NCB can progressively increase to a maximum of 50% of the Own Damage premium.",
+      "expected_topic": "No Claim Bonus",
+      "expected_evidence": [
+        {
+          "document_id": "DOC009",
+          "page": 2,
+          "section": "What is No Claim Bonus?",
+          "evidence_summary": "NCB ranges from 20% and can progressively increase to a maximum of 50% on Own Damage premium."
+        }
+      ]
+    },
+    {
+      "question_id": "Q006",
+      "category": "exact",
+      "difficulty": "medium",
+      "question": "Within how many days must an insurer refund premium after receiving a valid free-look cancellation request under the 2024 policyholder protection regulations?",
+      "answerable": true,
+      "expected_answer": "Within 7 days of receipt of the cancellation request, subject to the permitted deductions described in the regulations.",
+      "expected_topic": "free look cancellation refund",
+      "expected_evidence": [
+        {
+          "document_id": "DOC006",
+          "page": 24,
+          "section": "Free Look Period of Life and Health Policies",
+          "evidence_summary": "The insurer must process the request and refund premium within 7 days of receipt."
+        }
+      ]
+    },
+    {
+      "question_id": "Q007",
+      "category": "exact",
+      "difficulty": "medium",
+      "question": "Can a general insurer refuse to underwrite a liability-only motor policy covering motor third-party risk for a prospective policyholder?",
+      "answerable": true,
+      "expected_answer": "No. The 2024 IRDAI regulations state that a general insurer shall not refuse to underwrite such a liability-only motor policy.",
+      "expected_topic": "motor third-party underwriting obligation",
+      "expected_evidence": [
+        {
+          "document_id": "DOC007",
+          "page": 8,
+          "section": "Motor Third Party Obligations",
+          "evidence_summary": "A general insurer shall not refuse to underwrite a liability-only motor policy covering motor third-party risk."
+        }
+      ]
+    },
+    {
+      "question_id": "Q008",
+      "category": "semantic",
+      "difficulty": "medium",
+      "question": "If the driver of the insured private car was drunk when the accident happened, does the own-damage policy cover the loss?",
+      "answerable": true,
+      "expected_answer": "No. The standalone private car own-damage policy excludes accidental loss or damage when the insured or a person driving with the insured's knowledge and consent is under the influence of intoxicating liquor or drugs.",
+      "expected_topic": "intoxication exclusion",
+      "expected_evidence": [
+        {
+          "document_id": "DOC001",
+          "page": 2,
+          "section": "Section I exclusions",
+          "evidence_summary": "Accidental loss or damage while the driver is under the influence of intoxicating liquor or drugs is excluded."
+        }
+      ]
+    },
+    {
+      "question_id": "Q009",
+      "category": "semantic",
+      "difficulty": "medium",
+      "question": "My car was stolen. Do I need to tell only the insurer, or must I also inform the police?",
+      "answerable": true,
+      "expected_answer": "You must notify the insurer immediately, and in case of theft or a criminal act you must also give immediate notice to the police and cooperate with the insurer.",
+      "expected_topic": "theft claim notification",
+      "expected_evidence": [
+        {
+          "document_id": "DOC003",
+          "page": 3,
+          "section": "Conditions - Notice of Claim",
+          "evidence_summary": "The insurer must be notified immediately, and theft/criminal acts must also be reported immediately to police."
+        }
+      ]
+    },
+    {
+      "question_id": "Q010",
+      "category": "semantic",
+      "difficulty": "medium",
+      "question": "If I change my motor insurer at renewal, do I lose the No Claim Bonus I earned?",
+      "answerable": true,
+      "expected_answer": "No. IRDAI's FAQ says NCB can be availed when changing insurer at renewal, provided acceptable proof of the earned NCB is produced.",
+      "expected_topic": "NCB portability between insurers",
+      "expected_evidence": [
+        {
+          "document_id": "DOC009",
+          "page": 2,
+          "section": "Will my No Claim Bonus get ported?",
+          "evidence_summary": "NCB can be availed when changing insurer at renewal if proof of entitlement is produced."
+        }
+      ]
+    },
+    {
+      "question_id": "Q011",
+      "category": "semantic",
+      "difficulty": "medium",
+      "question": "If my cashless hospital request is denied, does that automatically mean I cannot claim anything?",
+      "answerable": true,
+      "expected_answer": "No. Under the Optima Secure procedure, if cashless access is denied, the insured may still take treatment as advised and submit the claim for reimbursement.",
+      "expected_topic": "cashless denial and reimbursement",
+      "expected_evidence": [
+        {
+          "document_id": "DOC004",
+          "page": 49,
+          "section": "Procedure for Cashless Claims in India",
+          "evidence_summary": "Denial of cashless access does not prevent treatment and a later reimbursement claim."
+        }
+      ]
+    },
+    {
+      "question_id": "Q012",
+      "category": "semantic",
+      "difficulty": "medium",
+      "question": "After five continuous years of health coverage, can the insurer still challenge my policy for an old non-disclosure that was not fraudulent?",
+      "answerable": true,
+      "expected_answer": "Generally no. After 60 continuous months of coverage, the policy and claim are not contestable on grounds of non-disclosure or misrepresentation, except in cases of established fraud, subject to the moratorium rules including enhanced sums insured.",
+      "expected_topic": "health insurance moratorium",
+      "expected_evidence": [
+        {
+          "document_id": "DOC004",
+          "page": 37,
+          "section": "Moratorium Period",
+          "evidence_summary": "After 60 continuous months, policy and claims are not contestable for non-disclosure/misrepresentation except established fraud."
+        }
+      ]
+    },
+    {
+      "question_id": "Q013",
+      "category": "semantic",
+      "difficulty": "medium",
+      "question": "For a new two-wheeler, how long must the mandatory third-party cover run?",
+      "answerable": true,
+      "expected_answer": "Five years.",
+      "expected_topic": "long-term motor third-party cover",
+      "expected_evidence": [
+        {
+          "document_id": "DOC008",
+          "page": 2,
+          "section": "Issuance of long-term Motor Third Party Insurance policies",
+          "evidence_summary": "New two-wheelers require five-year motor third-party insurance."
+        }
+      ]
+    },
+    {
+      "question_id": "Q014",
+      "category": "semantic",
+      "difficulty": "hard",
+      "question": "Can an insurer keep asking me for claim documents one by one over time instead of requesting everything it needs together?",
+      "answerable": true,
+      "expected_answer": "The 2024 IRDAI policyholder protection regulations say insurers should call for all necessary documents specified in the policy at one go and avoid seeking them piecemeal.",
+      "expected_topic": "claim documentation handling",
+      "expected_evidence": [
+        {
+          "document_id": "DOC006",
+          "page": 25,
+          "section": "Treatment of Policyholders and Claimants",
+          "evidence_summary": "Necessary claim documents should be called for at one go rather than piecemeal."
+        }
+      ]
+    },
+    {
+      "question_id": "Q015",
+      "category": "multi_document",
+      "difficulty": "hard",
+      "question": "For a new private car, how long is the mandatory third-party cover, and does IRDAI's consumer FAQ describe an annual liability-only policy as an available option for that new car?",
+      "answerable": true,
+      "expected_answer": "The mandatory third-party cover for a new private car is three years. IRDAI's FAQ says a new private car may use a bundled policy or a long-term liability-only policy, while an annual liability-only policy for a new private car is not available/permitted.",
+      "expected_topic": "new private car third-party policy term",
+      "expected_evidence": [
+        {
+          "document_id": "DOC008",
+          "page": 2,
+          "section": "Long-term Motor Third Party Insurance",
+          "evidence_summary": "New cars require three-year motor third-party insurance."
+        },
+        {
+          "document_id": "DOC009",
+          "page": 1,
+          "section": "Which policy should I purchase for my new Private Car or new Two-Wheeler?",
+          "evidence_summary": "Bundled or long-term liability-only policies are described for new vehicles; annual liability-only/package policy is not available for a new private car/two-wheeler."
+        }
+      ]
+    },
+    {
+      "question_id": "Q016",
+      "category": "multi_document",
+      "difficulty": "hard",
+      "question": "What should happen after an insured motor loss in terms of notifying the insurer, and what does IRDAI require insurers to do about claim-document requirements?",
+      "answerable": true,
+      "expected_answer": "The motor policy requires immediate claim intimation to the insurer. Separately, IRDAI requires the insurer to list the specific supporting documents and claim-settlement procedure in the policy document and prominently on its website, and to avoid asking for required documents piecemeal.",
+      "expected_topic": "claim intimation and claims documentation governance",
+      "expected_evidence": [
+        {
+          "document_id": "DOC001",
+          "page": 7,
+          "section": "Claims Intimation",
+          "evidence_summary": "The insurance company must be informed immediately after loss due to an insured event."
+        },
+        {
+          "document_id": "DOC006",
+          "page": 25,
+          "section": "Settlement of Claims / Treatment of Policyholders and Claimants",
+          "evidence_summary": "Insurers must list claim documentation/procedures and request necessary documents at one go."
+        }
+      ]
+    },
+    {
+      "question_id": "Q017",
+      "category": "multi_document",
+      "difficulty": "hard",
+      "question": "How do the HDFC ERGO health policy and IRDAI's 2024 product regulations align on the health-insurance moratorium period?",
+      "answerable": true,
+      "expected_answer": "Both state a moratorium of 60 continuous months of coverage, including portability and migration, after which a policy and claim are generally not contestable for non-disclosure or misrepresentation except established fraud, with special treatment for enhanced sums insured.",
+      "expected_topic": "health moratorium consistency",
+      "expected_evidence": [
+        {
+          "document_id": "DOC004",
+          "page": 37,
+          "section": "Moratorium Period",
+          "evidence_summary": "Optima Secure specifies a 60-continuous-month moratorium, except established fraud."
+        },
+        {
+          "document_id": "DOC005",
+          "page": 37,
+          "section": "Moratorium",
+          "evidence_summary": "IRDAI's product regulations prescribe the same 60-continuous-month moratorium principle."
+        }
+      ]
+    },
+    {
+      "question_id": "Q018",
+      "category": "multi_document",
+      "difficulty": "hard",
+      "question": "What does the HDFC ERGO health policy require for planned hospitalization notice, and what broader claim-handling duty does IRDAI impose on insurers?",
+      "answerable": true,
+      "expected_answer": "The HDFC ERGO policy requires notice at least 48 hours before planned hospitalization (or planned Home Health Care under the specified section). IRDAI separately requires claims to be handled fairly, with support, stage-wise information, and timely settlement within applicable turnaround times.",
+      "expected_topic": "planned hospitalization and claim servicing",
+      "expected_evidence": [
+        {
+          "document_id": "DOC004",
+          "page": 49,
+          "section": "Notification of a Claim",
+          "evidence_summary": "Planned hospitalization requires at least 48 hours' prior notice."
+        },
+        {
+          "document_id": "DOC006",
+          "page": 25,
+          "section": "Settlement of Claims / Treatment of Policyholders and Claimants",
+          "evidence_summary": "IRDAI requires support, fair treatment, information during settlement, and timely handling."
+        }
+      ]
+    },
+    {
+      "question_id": "Q019",
+      "category": "multi_document",
+      "difficulty": "hard",
+      "question": "How does IRDAI describe a motor deductible generally, and how is the deductible applied in the HDFC ERGO standalone private car policy?",
+      "answerable": true,
+      "expected_answer": "IRDAI's FAQ describes a deductible/excess as the amount above which a claim becomes payable and notes standard/compulsory excess amounts vary by vehicle. The HDFC ERGO standalone policy states that for each Section I claim the company is not liable for the deductible stated in the schedule.",
+      "expected_topic": "motor deductible concept and policy application",
+      "expected_evidence": [
+        {
+          "document_id": "DOC009",
+          "page": 2,
+          "section": "What is deductible?",
+          "evidence_summary": "IRDAI explains deductible/excess as the insured-retained portion before claim payment, with standard amounts varying by vehicle."
+        },
+        {
+          "document_id": "DOC001",
+          "page": 4,
+          "section": "Deductible",
+          "evidence_summary": "Each Section I claim is subject to the deductible stated in the policy schedule."
+        }
+      ]
+    },
+    {
+      "question_id": "Q020",
+      "category": "unanswerable",
+      "difficulty": "easy",
+      "question": "Will HDFC ERGO approve my accident claim tomorrow?",
+      "answerable": false,
+      "expected_answer": "Insufficient information in the supplied documents. The documents describe coverage, procedures and claim-handling rules but cannot predict whether a specific claim will be approved tomorrow.",
+      "expected_topic": "future claim approval prediction",
+      "expected_evidence": []
+    },
+    {
+      "question_id": "Q021",
+      "category": "unanswerable",
+      "difficulty": "medium",
+      "question": "What exact rupee amount will HDFC ERGO pay for damage to my car next week?",
+      "answerable": false,
+      "expected_answer": "Insufficient information in the supplied documents. The payable amount depends on the specific loss, policy schedule, IDV/deductible, assessment and other claim facts not supplied here.",
+      "expected_topic": "specific future claim payout",
+      "expected_evidence": []
+    },
+    {
+      "question_id": "Q022",
+      "category": "unanswerable",
+      "difficulty": "medium",
+      "question": "Will my motor insurance premium increase by exactly 18% at my next renewal?",
+      "answerable": false,
+      "expected_answer": "Insufficient information in the supplied documents. The corpus does not establish an exact 18% future premium increase for the user.",
+      "expected_topic": "future premium prediction",
+      "expected_evidence": []
+    },
+    {
+      "question_id": "Q023",
+      "category": "unanswerable",
+      "difficulty": "hard",
+      "question": "Which garage near my current location will repair my car fastest under this policy?",
+      "answerable": false,
+      "expected_answer": "Insufficient information in the supplied documents. The corpus does not contain the user's current location, live garage availability, or repair-time estimates.",
+      "expected_topic": "live garage recommendation",
+      "expected_evidence": []
+    },
+    {
+      "question_id": "Q024",
+      "category": "unanswerable",
+      "difficulty": "hard",
+      "question": "What is the probability, as a percentage, that IRDAI will change the motor third-party rules next year?",
+      "answerable": false,
+      "expected_answer": "Insufficient information in the supplied documents. The documents contain current/historical rules and review provisions but do not provide a probability forecast for future regulatory changes.",
+      "expected_topic": "regulatory change probability",
+      "expected_evidence": []
+    }
+  ]
+}

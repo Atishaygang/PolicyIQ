@@ -1,0 +1,82 @@
+# LangChain Core
+langchain
+langchain-core
+langchain-community
+langchain-text-splitters
+
+# OpenAI
+langchain-openai
+openai
+
+# Google Gemini
+langchain-google-genai
+google-generativeai
+
+# Anthropic Claude
+langchain-anthropic
+anthropic
+
+# Hugging Face
+langchain-huggingface
+transformers
+huggingface_hub
+sentence-transformers
+
+# Ollama (Local LLMs)
+langchain-ollama
+ollama
+
+# Groq
+langchain-groq
+
+# Vector Databases
+faiss-cpu
+chromadb
+pinecone
+qdrant-client
+weaviate-client
+
+# Embeddings
+tiktoken
+
+# Document Loaders
+pypdf
+pymupdf
+python-docx
+unstructured
+beautifulsoup4
+lxml
+
+# Web Scraping
+requests
+selenium
+
+# Environment Variables
+python-dotenv
+
+# Async Support
+aiohttp
+
+# Data Processing
+pandas
+numpy
+
+# API Framework (Optional)
+fastapi
+uvicorn
+
+# Validation
+pydantic
+
+# Logging & Utilities
+loguru
+tqdm
+
+langchain-cohere
+cohere
+
+langchain-huggingface
+langchain-core
+huggingface-hub
+python-dotenv
+streamlit

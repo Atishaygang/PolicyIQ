@@ -1,0 +1,27 @@
+# Environment
+.env
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local vector database
+chroma_db/
+chroma/
+*.sqlite3
+
+# Logs
+*.log
+logs/
