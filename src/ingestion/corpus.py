@@ -3,7 +3,7 @@ from collections import Counter
 
 import pandas as pd
 
-from loader import load_and_clean_pdf
+from src.ingestion.loader import load_and_clean_pdf
 
 
 REQUIRED_MANIFEST_COLUMNS = {
