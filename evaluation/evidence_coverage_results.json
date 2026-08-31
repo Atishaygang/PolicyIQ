@@ -1,0 +1,135 @@
+[
+  {
+    "question_id": "Q001",
+    "status": "PASS",
+    "supporting_chunks": 1,
+    "failure_reason": null,
+    "notes": "Complete CTL threshold condition is present in Chunk 2."
+  },
+  {
+    "question_id": "Q002",
+    "status": "PASS",
+    "supporting_chunks": 1,
+    "failure_reason": null,
+    "notes": "Complete depreciation rule is present in Chunk 2; applicable rate is 50%."
+  },
+  {
+    "question_id": "Q003",
+    "status": "PASS",
+    "supporting_chunks": 1,
+    "failure_reason": null,
+    "notes": "Emergency hospitalization notification timeline is fully present in Chunk 1."
+  },
+  {
+    "question_id": "Q004",
+    "status": "PASS",
+    "supporting_chunks": 1,
+    "failure_reason": null,
+    "notes": "Free-look period is fully stated in Chunk 3 as 30 days from receipt of the policy document."
+  },
+  {
+    "question_id": "Q005",
+    "status": "PASS",
+    "supporting_chunks": 1,
+    "failure_reason": null,
+    "notes": "Maximum NCB percentage of 50% is fully present in Chunk 1."
+  },
+  {
+    "question_id": "Q006",
+    "status": "PASS",
+    "supporting_chunks": 1,
+    "failure_reason": null,
+    "notes": "Free-look cancellation refund timeline of 7 days is fully present in Chunk 2."
+  },
+  {
+    "question_id": "Q007",
+    "status": "PASS",
+    "supporting_chunks": 1,
+    "failure_reason": null,
+    "notes": "Complete prohibition on refusing liability-only motor third-party coverage is present in Chunk 1."
+  },
+  {
+    "question_id": "Q008",
+    "status": "PASS",
+    "supporting_chunks": 1,
+    "failure_reason": null,
+    "notes": "Drunk-driving exclusion is fully present in Chunk 1."
+  },
+  {
+    "question_id": "Q009",
+    "status": "PASS",
+    "supporting_chunks": 2,
+    "failure_reason": null,
+    "notes": "Insurer notification is present in Chunk 5 and immediate police notification for theft is present in Chunk 6."
+  },
+  {
+    "question_id": "Q010",
+    "status": "PASS",
+    "supporting_chunks": 1,
+    "failure_reason": null,
+    "notes": "Chunk 2 fully states that NCB can be carried to a new insurer at renewal with proof of earned NCB."
+  },
+  {
+    "question_id": "Q011",
+    "status": "PASS",
+    "supporting_chunks": 1,
+    "failure_reason": null,
+    "notes": "Chunk 2 clearly states that after cashless denial, treatment can continue and the claim may be submitted for reimbursement."
+  },
+  {
+    "question_id": "Q012",
+    "status": "PASS",
+    "supporting_chunks": 1,
+    "failure_reason": null,
+    "notes": "Moratorium rule is fully present in Chunk 1: after 60 continuous months, non-disclosure or misrepresentation cannot be contested unless there is established fraud."
+  },
+  {
+    "question_id": "Q013",
+    "status": "PASS",
+    "supporting_chunks": 1,
+    "failure_reason": null,
+    "notes": "Mandatory five-year third-party cover for new two-wheelers is fully present in Chunk 1."
+  },
+  {
+    "question_id": "Q014",
+    "status": "PASS",
+    "supporting_chunks": 1,
+    "failure_reason": null,
+    "notes": "Complete requirement to request all necessary claim documents at one go and avoid piecemeal requests is present in Chunk 2."
+  },
+  {
+    "question_id": "Q015",
+    "status": "PASS",
+    "supporting_chunks": 2,
+    "failure_reason": null,
+    "notes": "DOC008 confirms mandatory 3-year third-party cover for new private cars; DOC009 confirms annual liability-only policy is not permitted."
+  },
+  {
+    "question_id": "Q016",
+    "status": "PASS",
+    "supporting_chunks": 2,
+    "failure_reason": null,
+    "notes": "DOC001 requires immediate intimation of insured loss; DOC006 requires insurers to call for all necessary claim documents at one go and avoid piecemeal requests."
+  },
+  {
+    "question_id": "Q017",
+    "status": "PASS",
+    "supporting_chunks": 2,
+    "failure_reason": null,
+    "notes": "Both DOC004 and DOC005 define the health-insurance moratorium as 60 continuous months of coverage, including portability/migration, with contestability thereafter limited to established fraud."
+  },
+  {
+    "question_id": "Q018",
+    "status": "PASS",
+    "supporting_chunks": 2,
+    "failure_reason": null,
+    "notes": "DOC004 requires at least 48 hours prior notice for planned hospitalization; DOC006 requires insurers to handle claims fairly, provide support and information, request necessary documents at one go, and settle claims promptly within prescribed/reasonable timelines."
+  },
+  {
+    "question_id": "Q019",
+    "status": "PASS",
+    "supporting_chunks": 2,
+    "failure_reason": null,
+    "notes": "IRDAI defines deductible generally in DOC009, and DOC001 states that the deductible in the schedule is applied to each Section I claim."
+  }
+]

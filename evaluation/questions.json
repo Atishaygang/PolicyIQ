@@ -71,7 +71,7 @@
       "expected_evidence": [
         {
           "document_id": "DOC003",
-          "page": 2,
+          "page": [2],
           "section": "Insured's Declared Value / CTL",
           "evidence_summary": "CTL applies when aggregate retrieval and/or repair cost exceeds 75% of IDV."
         }
@@ -88,7 +88,7 @@
       "expected_evidence": [
         {
           "document_id": "DOC001",
-          "page": 1,
+          "page": [1],
           "section": "Section I - Loss of or Damage to the Vehicle Insured",
           "evidence_summary": "Rubber/nylon/plastic parts, tyres, tubes, batteries and air bags are subject to 50% depreciation."
         }
@@ -105,7 +105,7 @@
       "expected_evidence": [
         {
           "document_id": "DOC004",
-          "page": 49,
+          "page": [49],
           "section": "Claims Procedure - Notification of a Claim",
           "evidence_summary": "Emergency hospitalization must be notified within 24 hours or before discharge, whichever is earlier."
         }
@@ -122,7 +122,7 @@
       "expected_evidence": [
         {
           "document_id": "DOC004",
-          "page": 37,
+          "page": [37],
           "section": "Free Look Period",
           "evidence_summary": "A 30-day free-look period applies to new individual health policies, not renewals or porting/migration."
         }
@@ -139,7 +139,7 @@
       "expected_evidence": [
         {
           "document_id": "DOC009",
-          "page": 2,
+          "page": [2],
           "section": "What is No Claim Bonus?",
           "evidence_summary": "NCB ranges from 20% and can progressively increase to a maximum of 50% on Own Damage premium."
         }
@@ -156,7 +156,7 @@
       "expected_evidence": [
         {
           "document_id": "DOC006",
-          "page": 24,
+          "page": [24],
           "section": "Free Look Period of Life and Health Policies",
           "evidence_summary": "The insurer must process the request and refund premium within 7 days of receipt."
         }
@@ -173,7 +173,7 @@
       "expected_evidence": [
         {
           "document_id": "DOC007",
-          "page": 8,
+          "page": [8],
           "section": "Motor Third Party Obligations",
           "evidence_summary": "A general insurer shall not refuse to underwrite a liability-only motor policy covering motor third-party risk."
         }
@@ -190,7 +190,7 @@
       "expected_evidence": [
         {
           "document_id": "DOC001",
-          "page": 2,
+          "page": [2],
           "section": "Section I exclusions",
           "evidence_summary": "Accidental loss or damage while the driver is under the influence of intoxicating liquor or drugs is excluded."
         }
@@ -207,7 +207,7 @@
       "expected_evidence": [
         {
           "document_id": "DOC003",
-          "page": 3,
+          "page": [3],
           "section": "Conditions - Notice of Claim",
           "evidence_summary": "The insurer must be notified immediately, and theft/criminal acts must also be reported immediately to police."
         }
@@ -224,7 +224,7 @@
       "expected_evidence": [
         {
           "document_id": "DOC009",
-          "page": 2,
+          "page": [2],
           "section": "Will my No Claim Bonus get ported?",
           "evidence_summary": "NCB can be availed when changing insurer at renewal if proof of entitlement is produced."
         }
@@ -241,7 +241,7 @@
       "expected_evidence": [
         {
           "document_id": "DOC004",
-          "page": 49,
+          "page": [49],
           "section": "Procedure for Cashless Claims in India",
           "evidence_summary": "Denial of cashless access does not prevent treatment and a later reimbursement claim."
         }
@@ -258,7 +258,7 @@
       "expected_evidence": [
         {
           "document_id": "DOC004",
-          "page": 37,
+          "page": [37],
           "section": "Moratorium Period",
           "evidence_summary": "After 60 continuous months, policy and claims are not contestable for non-disclosure/misrepresentation except established fraud."
         }
@@ -275,7 +275,7 @@
       "expected_evidence": [
         {
           "document_id": "DOC008",
-          "page": 2,
+          "page": [2],
           "section": "Issuance of long-term Motor Third Party Insurance policies",
           "evidence_summary": "New two-wheelers require five-year motor third-party insurance."
         }
@@ -292,7 +292,7 @@
       "expected_evidence": [
         {
           "document_id": "DOC006",
-          "page": 25,
+          "page": [25],
           "section": "Treatment of Policyholders and Claimants",
           "evidence_summary": "Necessary claim documents should be called for at one go rather than piecemeal."
         }
@@ -309,13 +309,13 @@
       "expected_evidence": [
         {
           "document_id": "DOC008",
-          "page": 2,
+          "page": [2],
           "section": "Long-term Motor Third Party Insurance",
           "evidence_summary": "New cars require three-year motor third-party insurance."
         },
         {
           "document_id": "DOC009",
-          "page": 1,
+          "page": [1],
           "section": "Which policy should I purchase for my new Private Car or new Two-Wheeler?",
           "evidence_summary": "Bundled or long-term liability-only policies are described for new vehicles; annual liability-only/package policy is not available for a new private car/two-wheeler."
         }
@@ -332,13 +332,13 @@
       "expected_evidence": [
         {
           "document_id": "DOC001",
-          "page": 7,
+          "page": [7],
           "section": "Claims Intimation",
           "evidence_summary": "The insurance company must be informed immediately after loss due to an insured event."
         },
         {
           "document_id": "DOC006",
-          "page": 25,
+          "page": [25],
           "section": "Settlement of Claims / Treatment of Policyholders and Claimants",
           "evidence_summary": "Insurers must list claim documentation/procedures and request necessary documents at one go."
         }
@@ -355,13 +355,13 @@
       "expected_evidence": [
         {
           "document_id": "DOC004",
-          "page": 37,
+          "page": [37],
           "section": "Moratorium Period",
           "evidence_summary": "Optima Secure specifies a 60-continuous-month moratorium, except established fraud."
         },
         {
           "document_id": "DOC005",
-          "page": 37,
+          "page": [37],
           "section": "Moratorium",
           "evidence_summary": "IRDAI's product regulations prescribe the same 60-continuous-month moratorium principle."
         }
@@ -378,13 +378,13 @@
       "expected_evidence": [
         {
           "document_id": "DOC004",
-          "page": 49,
+          "page": [49],
           "section": "Notification of a Claim",
           "evidence_summary": "Planned hospitalization requires at least 48 hours' prior notice."
         },
         {
           "document_id": "DOC006",
-          "page": 25,
+          "page": [25],
           "section": "Settlement of Claims / Treatment of Policyholders and Claimants",
           "evidence_summary": "IRDAI requires support, fair treatment, information during settlement, and timely handling."
         }
@@ -401,13 +401,13 @@
       "expected_evidence": [
         {
           "document_id": "DOC009",
-          "page": 2,
+          "page": [2],
           "section": "What is deductible?",
           "evidence_summary": "IRDAI explains deductible/excess as the insured-retained portion before claim payment, with standard amounts varying by vehicle."
         },
         {
           "document_id": "DOC001",
-          "page": 4,
+          "page": [4],
           "section": "Deductible",
           "evidence_summary": "Each Section I claim is subject to the deductible stated in the policy schedule."
         }
