@@ -1,6 +1,7 @@
 from src.retrieval.retriever import retrieve_documents
 from src.rag.llm import get_llm
-from src.rag.prompt import SYSTEM_PROMPT , USER_PROMPT
+from src.rag.prompt import SYSTEM_PROMPT, USER_PROMPT
+
 
 def build_context(documents):
 
@@ -13,12 +14,9 @@ def build_context(documents):
 
         source = (
             f"[SOURCE {index}]\n"
-            f"Document ID: "
-            f"{doc.metadata['document_id']}\n"
-            f"Filename: "
-            f"{doc.metadata['filename']}\n"
-            f"PDF Page: "
-            f"{doc.metadata['pdf_page']}\n"
+            f"Document ID: {doc.metadata['document_id']}\n"
+            f"Filename: {doc.metadata['filename']}\n"
+            f"PDF Page: {doc.metadata['pdf_page']}\n"
             f"Content:\n"
             f"{doc.page_content}"
         )
@@ -26,6 +24,24 @@ def build_context(documents):
         context_parts.append(source)
 
     return "\n\n".join(context_parts)
+
+
+def build_sources(documents):
+
+    sources = []
+
+    for doc in documents:
+
+        source = {
+            "document_id": doc.metadata["document_id"],
+            "filename": doc.metadata["filename"],
+            "page": doc.metadata["pdf_page"]
+        }
+
+        sources.append(source)
+
+    return sources
+
 
 def ask_policyiq(question):
 
@@ -36,7 +52,7 @@ def ask_policyiq(question):
 
     context = build_context(documents)
 
-    user_prompt = USER_PROMPT.format(
+    formatted_user_prompt = USER_PROMPT.format(
         context=context,
         question=question
     )
@@ -46,36 +62,47 @@ def ask_policyiq(question):
     response = llm.invoke(
         [
             ("system", SYSTEM_PROMPT),
-            ("human", user_prompt)
+            ("human", formatted_user_prompt)
         ]
     )
 
-    return response.content, documents
+    sources = build_sources(documents)
+
+    result = {
+        "question": question,
+        "answer": response.content,
+        "sources": sources
+    }
+
+    return result
+
 
 if __name__ == "__main__":
 
     question = (
-        "What will HDFC ERGO's share price be next month?"
+        "What is the insurance policy if the driver was drunk at the time of driving"
     )
 
-    answer, sources = ask_policyiq(question)
+    result = ask_policyiq(question)
 
     print("\n==============================")
     print("POLICYIQ ANSWER")
     print("==============================")
 
-    print(answer)
+    print(result["answer"])
 
     print("\n==============================")
     print("RETRIEVED SOURCES")
     print("==============================")
 
-    for index, doc in enumerate(
-        sources,
+    for index, source in enumerate(
+        result["sources"],
         start=1
     ):
+
         print(
             f"{index}. "
-            f"{doc.metadata['document_id']} "
-            f"| Page {doc.metadata['pdf_page']}"
+            f"{source['document_id']} "
+            f"| {source['filename']} "
+            f"| Page {source['page']}"
         )
