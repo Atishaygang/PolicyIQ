@@ -80,3 +80,4 @@ langchain-core
 huggingface-hub
 python-dotenv
 streamlit
+langchain-chroma
