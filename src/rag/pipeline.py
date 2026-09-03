@@ -80,7 +80,8 @@ def ask_policyiq(question):
 if __name__ == "__main__":
 
     question = (
-        "What is the insurance policy if the driver was drunk at the time of driving"
+        """What is the insurance policy if the driver was
+          drunk at the time of driving"""
     )
 
     result = ask_policyiq(question)
