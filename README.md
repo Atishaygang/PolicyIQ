@@ -385,3 +385,15 @@ Citation validation
 ## Status
 
 **PolicyIQ V1: end-to-end RAG baseline operational.**
+
+
+V1 — Core RAG ✅ FROZEN
+
+V2 — Retrieval Optimization 🚧
+
+V2.1 Metadata-aware retrieval
+V2.2 BM25 lexical retrieval
+V2.3 Hybrid retrieval
+V2.4 Reranking
+V2.5 Query transformation
+V2.6 Evaluation + final selection
