@@ -23,3 +23,19 @@ def load_vector_store():
     )
     return vector_store
 
+if __name__ == "__main__":
+    vector_store = load_vector_store()
+
+    docs = vector_store.similarity_search(
+    "What aboul health insurance",
+    k=5
+    )
+
+    for i, doc in enumerate(docs, start=1):
+        print(f"\n--- CHUNK {i} ---")
+        print(doc.metadata['category'])
+
+
+
+
+

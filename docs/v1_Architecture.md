@@ -195,3 +195,15 @@ The RAG pipeline currently keeps the generated answer and retrieved `Document` o
 ## Final Decision
 
 **PolicyIQ V1 adopts a modular, evidence-first RAG architecture with explicit separation between ingestion, retrieval, and grounded generation.**
+
+
+V1 — Core RAG ✅ FROZEN
+
+V2 — Retrieval Optimization 🚧
+
+V2.1 Metadata-aware retrieval
+V2.2 BM25 lexical retrieval
+V2.3 Hybrid retrieval
+V2.4 Reranking
+V2.5 Query transformation
+V2.6 Evaluation + final selection

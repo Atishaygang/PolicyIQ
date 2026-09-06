@@ -63,6 +63,7 @@
     {
       "question_id": "Q001",
       "category": "exact",
+      "retrieval_category": "motor",
       "difficulty": "easy",
       "question": "At what repair or retrieval cost threshold is a private car treated as a Constructive Total Loss under the bundled policy?",
       "answerable": true,
@@ -80,6 +81,7 @@
     {
       "question_id": "Q002",
       "category": "exact",
+      "retrieval_category": "motor",
       "difficulty": "easy",
       "question": "What percentage depreciation applies to rubber, nylon, plastic parts, tyres, tubes, batteries and air bags under the standalone private car own-damage policy?",
       "answerable": true,
@@ -97,6 +99,7 @@
     {
       "question_id": "Q003",
       "category": "exact",
+      "retrieval_category": "health",
       "difficulty": "easy",
       "question": "How soon must HDFC ERGO be notified of an emergency hospitalization under the Optima Secure policy?",
       "answerable": true,
@@ -114,6 +117,7 @@
     {
       "question_id": "Q004",
       "category": "exact",
+      "retrieval_category": "health",
       "difficulty": "easy",
       "question": "What is the free-look period for a new individual Optima Secure health insurance policy?",
       "answerable": true,
@@ -131,6 +135,7 @@
     {
       "question_id": "Q005",
       "category": "exact",
+      "retrieval_category": "motor",
       "difficulty": "easy",
       "question": "According to IRDAI's Motor Insurance FAQ, what is the maximum No Claim Bonus percentage mentioned for successive claim-free years?",
       "answerable": true,
@@ -148,6 +153,7 @@
     {
       "question_id": "Q006",
       "category": "exact",
+      "retrieval_category": "regulatory",
       "difficulty": "medium",
       "question": "Within how many days must an insurer refund premium after receiving a valid free-look cancellation request under the 2024 policyholder protection regulations?",
       "answerable": true,
@@ -165,6 +171,7 @@
     {
       "question_id": "Q007",
       "category": "exact",
+      "retrieval_category": "motor",
       "difficulty": "medium",
       "question": "Can a general insurer refuse to underwrite a liability-only motor policy covering motor third-party risk for a prospective policyholder?",
       "answerable": true,
@@ -182,6 +189,7 @@
     {
       "question_id": "Q008",
       "category": "semantic",
+      "retrieval_category": "motor",
       "difficulty": "medium",
       "question": "If the driver of the insured private car was drunk when the accident happened, does the own-damage policy cover the loss?",
       "answerable": true,
@@ -199,6 +207,7 @@
     {
       "question_id": "Q009",
       "category": "semantic",
+      "retrieval_category": "motor",
       "difficulty": "medium",
       "question": "My car was stolen. Do I need to tell only the insurer, or must I also inform the police?",
       "answerable": true,
@@ -216,6 +225,7 @@
     {
       "question_id": "Q010",
       "category": "semantic",
+      "retrieval_category": "motor",
       "difficulty": "medium",
       "question": "If I change my motor insurer at renewal, do I lose the No Claim Bonus I earned?",
       "answerable": true,
@@ -233,6 +243,7 @@
     {
       "question_id": "Q011",
       "category": "semantic",
+      "retrieval_category": "health",
       "difficulty": "medium",
       "question": "If my cashless hospital request is denied, does that automatically mean I cannot claim anything?",
       "answerable": true,
@@ -250,6 +261,7 @@
     {
       "question_id": "Q012",
       "category": "semantic",
+      "retrieval_category": "health",
       "difficulty": "medium",
       "question": "After five continuous years of health coverage, can the insurer still challenge my policy for an old non-disclosure that was not fraudulent?",
       "answerable": true,
@@ -267,6 +279,7 @@
     {
       "question_id": "Q013",
       "category": "semantic",
+      "retrieval_category": "motor",
       "difficulty": "medium",
       "question": "For a new two-wheeler, how long must the mandatory third-party cover run?",
       "answerable": true,
@@ -284,6 +297,7 @@
     {
       "question_id": "Q014",
       "category": "semantic",
+      "retrieval_category": "regulatory",
       "difficulty": "hard",
       "question": "Can an insurer keep asking me for claim documents one by one over time instead of requesting everything it needs together?",
       "answerable": true,
@@ -301,6 +315,7 @@
     {
       "question_id": "Q015",
       "category": "multi_document",
+      "retrieval_category": "motor",
       "difficulty": "hard",
       "question": "For a new private car, how long is the mandatory third-party cover, and does IRDAI's consumer FAQ describe an annual liability-only policy as an available option for that new car?",
       "answerable": true,
@@ -324,6 +339,7 @@
     {
       "question_id": "Q016",
       "category": "multi_document",
+      "retrieval_category": ["motor" , "regulatory"],
       "difficulty": "hard",
       "question": "What should happen after an insured motor loss in terms of notifying the insurer, and what does IRDAI require insurers to do about claim-document requirements?",
       "answerable": true,
@@ -347,6 +363,7 @@
     {
       "question_id": "Q017",
       "category": "multi_document",
+      "retrieval_category": ["health" , "regulatory"],
       "difficulty": "hard",
       "question": "How do the HDFC ERGO health policy and IRDAI's 2024 product regulations align on the health-insurance moratorium period?",
       "answerable": true,
@@ -370,6 +387,7 @@
     {
       "question_id": "Q018",
       "category": "multi_document",
+      "retrieval_category": ["health" , "regulatory"],
       "difficulty": "hard",
       "question": "What does the HDFC ERGO health policy require for planned hospitalization notice, and what broader claim-handling duty does IRDAI impose on insurers?",
       "answerable": true,
@@ -393,6 +411,7 @@
     {
       "question_id": "Q019",
       "category": "multi_document",
+      "retrieval_category": "motor" ,
       "difficulty": "hard",
       "question": "How does IRDAI describe a motor deductible generally, and how is the deductible applied in the HDFC ERGO standalone private car policy?",
       "answerable": true,

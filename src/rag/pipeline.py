@@ -43,11 +43,18 @@ def build_sources(documents):
     return sources
 
 
+
+
+
 def ask_policyiq(question):
 
     documents = retrieve_documents(
         query=question,
-        k=5
+        k=5,
+        metadata_filter= {
+            "category": 'motor'
+        }
+        
     )
 
     context = build_context(documents)
@@ -80,14 +87,13 @@ def ask_policyiq(question):
 if __name__ == "__main__":
 
     question = (
-        """What is the insurance policy if the driver was
-          drunk at the time of driving"""
+        """What percentage depreciation applies to rubber, nylon, plastic parts, tyres, tubes, batteries and air bags under the standalone private car own-damage policy?"""
     )
 
     result = ask_policyiq(question)
 
     print("\n==============================")
-    print("POLICYIQ ANSWER")
+    print("POLICYIQ ANSWER with filter")
     print("==============================")
 
     print(result["answer"])
