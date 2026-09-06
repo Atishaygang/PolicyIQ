@@ -51,9 +51,7 @@ def ask_policyiq(question):
     documents = retrieve_documents(
         query=question,
         k=5,
-        metadata_filter= {
-            "category": 'motor'
-        }
+        metadata_filter= None
         
     )
 
