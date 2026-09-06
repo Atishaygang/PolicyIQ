@@ -81,3 +81,4 @@ huggingface-hub
 python-dotenv
 streamlit
 langchain-chroma
+rank_bm_25

@@ -18,6 +18,10 @@ def build_vector_store():
         documents=chunks,
         embedding= embedding_model,
         collection_name="policyiq_v1",
-        persist_directory= 'D:\Policy_IQ\data\processed'
+        persist_directory= r"D:\Policy_IQ\data\processed"
     )
     return vector_store
+
+if __name__ == "__main__":
+    vector_store = build_vector_store()
+    print("Vector count:", vector_store._collection.count())
