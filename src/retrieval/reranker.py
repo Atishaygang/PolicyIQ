@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+import torch
 from transformers import AutoModel
 
 from src.retrieval.multi_query_retriever import multi_query_search
@@ -10,10 +11,14 @@ MODEL_NAME = "jinaai/jina-reranker-v3"
 
 @lru_cache(maxsize=1)
 def get_reranker():
+
     model = AutoModel.from_pretrained(
         MODEL_NAME,
         trust_remote_code=True,
-        dtype="auto"
+
+        # Experiment P1:
+        # Force FP32 instead of dtype="auto" / BF16.
+        dtype=torch.float32
     )
 
     model.eval()
@@ -26,6 +31,7 @@ def rerank_documents(
     documents,
     top_n=5
 ):
+
     model = get_reranker()
 
     document_texts = [
@@ -52,6 +58,7 @@ def query_expanded_reranked_search(
     candidate_k=5,
     final_k=5
 ):
+
     candidates = multi_query_search(
         question=query,
         per_query_k=5,
@@ -68,7 +75,11 @@ def query_expanded_reranked_search(
 
 
 if __name__ == "__main__":
-    query = "Will my insurance pay if the driver was drunk?"
+
+    query = (
+        "Will my insurance pay "
+        "if the driver was drunk?"
+    )
 
     results = query_expanded_reranked_search(
         query=query,
@@ -76,7 +87,11 @@ if __name__ == "__main__":
         final_k=5
     )
 
-    for index, doc in enumerate(results, start=1):
+    for index, doc in enumerate(
+        results,
+        start=1
+    ):
+
         print(
             index,
             doc.metadata["document_id"],

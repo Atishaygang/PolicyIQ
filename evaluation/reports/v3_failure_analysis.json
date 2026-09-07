@@ -1,0 +1,195 @@
+{
+  "summary": {
+    "total_questions": 24,
+    "failure_counts": {
+      "retrieval_failure": 3,
+      "generation_interpretation_failure": 1,
+      "citation_or_evidence_usage_issue": 3,
+      "answer_completeness_issue": 2,
+      "no_material_failure": 15
+    },
+    "high_severity_questions": [
+      "Q003",
+      "Q004",
+      "Q008",
+      "Q018"
+    ],
+    "medium_severity_questions": [
+      "Q009",
+      "Q011",
+      "Q015",
+      "Q016",
+      "Q019"
+    ]
+  },
+  "failures": [
+    {
+      "question_id": "Q001",
+      "failure_type": "no_material_failure",
+      "secondary_type": null,
+      "severity": "none",
+      "notes": "Correct 75% IDV CTL threshold; bundled-policy evidence is directly present."
+    },
+    {
+      "question_id": "Q002",
+      "failure_type": "no_material_failure",
+      "secondary_type": null,
+      "severity": "none",
+      "notes": "Correct 50% depreciation with direct supporting policy evidence."
+    },
+    {
+      "question_id": "Q003",
+      "failure_type": "retrieval_failure",
+      "secondary_type": "false_refusal",
+      "severity": "high",
+      "notes": "False refusal; required 24-hour/before-discharge evidence did not reach final Top 5."
+    },
+    {
+      "question_id": "Q004",
+      "failure_type": "retrieval_failure",
+      "secondary_type": "false_refusal",
+      "severity": "high",
+      "notes": "False refusal; expected 30-day free-look evidence was not retrieved."
+    },
+    {
+      "question_id": "Q005",
+      "failure_type": "no_material_failure",
+      "secondary_type": null,
+      "severity": "none",
+      "notes": "Correct 50% maximum NCB; DOC009 page 2 directly supports it."
+    },
+    {
+      "question_id": "Q006",
+      "failure_type": "no_material_failure",
+      "secondary_type": null,
+      "severity": "none",
+      "notes": "Correct 7-day refund rule; cited retrieved sources support the answer."
+    },
+    {
+      "question_id": "Q007",
+      "failure_type": "no_material_failure",
+      "secondary_type": null,
+      "severity": "none",
+      "notes": "Correct liability-only underwriting obligation; directly supported by DOC007 page 8."
+    },
+    {
+      "question_id": "Q008",
+      "failure_type": "generation_interpretation_failure",
+      "secondary_type": "false_refusal",
+      "severity": "high",
+      "notes": "False refusal / interpretation failure. Intoxication wording appears in retrieved motor-policy chunks, but the answer says the excerpts do not establish the own-damage effect."
+    },
+    {
+      "question_id": "Q009",
+      "failure_type": "citation_or_evidence_usage_issue",
+      "secondary_type": "partial_support",
+      "severity": "medium",
+      "notes": "Correct conclusion, but cited evidence clearly supports police notice more strongly than insurer-notification, leaving citation coverage incomplete."
+    },
+    {
+      "question_id": "Q010",
+      "failure_type": "no_material_failure",
+      "secondary_type": null,
+      "severity": "none",
+      "notes": "Correct NCB portability answer with direct FAQ support."
+    },
+    {
+      "question_id": "Q011",
+      "failure_type": "citation_or_evidence_usage_issue",
+      "secondary_type": "partial_support",
+      "severity": "medium",
+      "notes": "Directionally correct, but argues from absence instead of clearly using the retrieved reimbursement pathway; weaker than the golden answer."
+    },
+    {
+      "question_id": "Q012",
+      "failure_type": "no_material_failure",
+      "secondary_type": null,
+      "severity": "none",
+      "notes": "Correct 60-month moratorium, fraud exception, and enhanced-sum-insured nuance."
+    },
+    {
+      "question_id": "Q013",
+      "failure_type": "no_material_failure",
+      "secondary_type": null,
+      "severity": "none",
+      "notes": "Correct five-year third-party term for new two-wheelers."
+    },
+    {
+      "question_id": "Q014",
+      "failure_type": "no_material_failure",
+      "secondary_type": null,
+      "severity": "none",
+      "notes": "Correct at-one-go claim-document requirement; directly supported by DOC006 page 25."
+    },
+    {
+      "question_id": "Q015",
+      "failure_type": "citation_or_evidence_usage_issue",
+      "secondary_type": "partial_support",
+      "severity": "medium",
+      "notes": "Gets the intended conclusion, but the decisive FAQ sentence is truncated in retrieved context and the answer partly relies on inference."
+    },
+    {
+      "question_id": "Q016",
+      "failure_type": "answer_completeness_issue",
+      "secondary_type": "incomplete_or_indirect",
+      "severity": "medium",
+      "notes": "Grounded, but incomplete: it answers notification and surveyor handling rather than the specific IRDAI document-governance requirement in the golden answer."
+    },
+    {
+      "question_id": "Q017",
+      "failure_type": "no_material_failure",
+      "secondary_type": null,
+      "severity": "none",
+      "notes": "Strong multi-document synthesis on the 60-month moratorium."
+    },
+    {
+      "question_id": "Q018",
+      "failure_type": "retrieval_failure",
+      "secondary_type": "false_refusal",
+      "severity": "high",
+      "notes": "False refusal; final Top 5 omitted the required planned-hospitalization notice and relevant regulatory evidence."
+    },
+    {
+      "question_id": "Q019",
+      "failure_type": "answer_completeness_issue",
+      "secondary_type": "incomplete_or_indirect",
+      "severity": "medium",
+      "notes": "Grounded deductible discussion, but IRDAI portion answers CIS disclosure rather than the golden FAQ definition."
+    },
+    {
+      "question_id": "Q020",
+      "failure_type": "no_material_failure",
+      "secondary_type": null,
+      "severity": "none",
+      "notes": "Correct refusal: future specific claim approval cannot be determined."
+    },
+    {
+      "question_id": "Q021",
+      "failure_type": "no_material_failure",
+      "secondary_type": null,
+      "severity": "none",
+      "notes": "Correct refusal: exact future rupee payout cannot be determined."
+    },
+    {
+      "question_id": "Q022",
+      "failure_type": "no_material_failure",
+      "secondary_type": null,
+      "severity": "none",
+      "notes": "Correct refusal: no evidence for an exact 18% future premium increase."
+    },
+    {
+      "question_id": "Q023",
+      "failure_type": "no_material_failure",
+      "secondary_type": null,
+      "severity": "none",
+      "notes": "Correct refusal: no live location, garage availability, or repair-time data."
+    },
+    {
+      "question_id": "Q024",
+      "failure_type": "no_material_failure",
+      "secondary_type": null,
+      "severity": "none",
+      "notes": "Correct refusal: no probability forecast for future IRDAI rule changes."
+    }
+  ]
+}

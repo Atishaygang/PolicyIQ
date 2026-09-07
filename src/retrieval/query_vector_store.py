@@ -1,41 +1,41 @@
-from src.retrieval.embeddings import get_embed_model
-from src.ingestion.corpus import load_corpus
-from src.chunking.splitter import split_documents
+from functools import lru_cache
 from langchain_chroma import Chroma
-import json
 
-with open(
-    r"evaluation/questions.json",
-    'r',
-    encoding='utf-8'
-) as file:
-    questions = json.load(file)
+from src.retrieval.embeddings import get_embed_model
 
 
+PERSIST_DIRECTORY = r"D:\Policy_IQ\data\processed"
 
 
+@lru_cache(maxsize=1)
 def load_vector_store():
-    embedding_model = get_embed_model()
+
     vector_store = Chroma(
         collection_name="policyiq_v1",
-        persist_directory=r"D:\Policy_IQ\data\processed",
-        embedding_function = embedding_model
+        persist_directory=PERSIST_DIRECTORY,
+        embedding_function=get_embed_model()
     )
+
     return vector_store
 
+
 if __name__ == "__main__":
+
     vector_store = load_vector_store()
 
     docs = vector_store.similarity_search(
-    "What aboul health insurance",
-    k=5
+        "What about health insurance",
+        k=5
     )
 
-    for i, doc in enumerate(docs, start=1):
-        print(f"\n--- CHUNK {i} ---")
-        print(doc.metadata['category'])
+    for i, doc in enumerate(
+        docs,
+        start=1
+    ):
+        print(
+            f"\n--- CHUNK {i} ---"
+        )
 
-
-
-
-
+        print(
+            doc.metadata["category"]
+        )
