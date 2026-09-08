@@ -15,9 +15,6 @@ def get_reranker():
     model = AutoModel.from_pretrained(
         MODEL_NAME,
         trust_remote_code=True,
-
-        # Experiment P1:
-        # Force FP32 instead of dtype="auto" / BF16.
         dtype=torch.float32
     )
 

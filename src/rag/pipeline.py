@@ -52,6 +52,7 @@ def ask_policyiq(question):
 
     timings = {}
 
+
     # ==========================================
     # Step 1:
     # Dense + BM25 -> RRF -> Hybrid Top 10
@@ -66,10 +67,8 @@ def ask_policyiq(question):
         final_k=10
     )
 
-    end = time.perf_counter()
-
     timings["hybrid_retrieval_ms"] = (
-        end - start
+        time.perf_counter() - start
     ) * 1000
 
 
@@ -85,41 +84,15 @@ def ask_policyiq(question):
         documents=hybrid_documents,
         top_n=5
     )
-    print("\n==============================")
-    print("RERANKED EVIDENCE DEBUG")
-    print("==============================")
-
-    for index, doc in enumerate(
-        documents,
-        start=1
-    ):
-        print(
-        f"\nRANK {index}"
-        )
-
-        print(
-        f"{doc.metadata['document_id']} "
-        f"| Page {doc.metadata['pdf_page']}"
-        )
-
-        print(
-        doc.page_content[:500]
-        )
-
-        print(
-        "-" * 60
-        )
-
-    end = time.perf_counter()
 
     timings["reranking_ms"] = (
-        end - start
+        time.perf_counter() - start
     ) * 1000
 
 
     # ==========================================
     # Step 3:
-    # Build context + prompt
+    # Build grounded context + prompt
     # ==========================================
 
     start = time.perf_counter()
@@ -133,26 +106,22 @@ def ask_policyiq(question):
         question=question
     )
 
-    end = time.perf_counter()
-
     timings["context_prompt_ms"] = (
-        end - start
+        time.perf_counter() - start
     ) * 1000
 
 
     # ==========================================
     # Step 4:
-    # Get LLM client
+    # Get cached LLM client
     # ==========================================
 
     start = time.perf_counter()
 
     llm = get_llm()
 
-    end = time.perf_counter()
-
     timings["llm_client_ms"] = (
-        end - start
+        time.perf_counter() - start
     ) * 1000
 
 
@@ -176,16 +145,14 @@ def ask_policyiq(question):
         ]
     )
 
-    end = time.perf_counter()
-
     timings["llm_generation_ms"] = (
-        end - start
+        time.perf_counter() - start
     ) * 1000
 
 
     # ==========================================
     # Step 6:
-    # Build final response
+    # Build final source response
     # ==========================================
 
     start = time.perf_counter()
@@ -194,17 +161,17 @@ def ask_policyiq(question):
         documents
     )
 
-    end = time.perf_counter()
-
     timings["response_build_ms"] = (
-        end - start
+        time.perf_counter() - start
     ) * 1000
 
 
-    total_end = time.perf_counter()
+    # ==========================================
+    # Total end-to-end latency
+    # ==========================================
 
     timings["total_ms"] = (
-        total_end - total_start
+        time.perf_counter() - total_start
     ) * 1000
 
 
@@ -219,65 +186,12 @@ def ask_policyiq(question):
     return result
 
 
-def warm_local_components(question):
-
-    print(
-        "\n=============================="
-    )
-    print(
-        "WARMING LOCAL COMPONENTS"
-    )
-    print(
-        "=============================="
-    )
-
-    hybrid_documents = hybrid_search(
-        query=question,
-        dense_k=10,
-        bm25_k=10,
-        final_k=10
-    )
-
-    rerank_documents(
-        query=question,
-        documents=hybrid_documents,
-        top_n=5
-    )
-
-    get_llm()
-
-    print(
-        "Local warm-up complete."
-    )
-
-
 if __name__ == "__main__":
 
     question = (
         "What percentage depreciation applies to rubber, nylon, "
         "plastic parts, tyres, tubes, batteries and air bags under "
         "the standalone private car own-damage policy?"
-    )
-
-    # Warm cached local components first.
-    #
-    # This prevents model loading / BM25 construction /
-    # vector-store initialization from contaminating the
-    # steady-state query latency measurement.
-
-    warm_local_components(
-        question
-    )
-
-
-    print(
-        "\n=============================="
-    )
-    print(
-        "RUNNING PROFILED QUERY"
-    )
-    print(
-        "=============================="
     )
 
     result = ask_policyiq(
@@ -327,7 +241,7 @@ if __name__ == "__main__":
         "\n=============================="
     )
     print(
-        "PIPELINE LATENCY PROFILE"
+        "PIPELINE LATENCY"
     )
     print(
         "=============================="
@@ -337,55 +251,41 @@ if __name__ == "__main__":
         "timings"
     ]
 
-    total_ms = timings[
-        "total_ms"
-    ]
+    print(
+        f"Hybrid retrieval: "
+        f"{timings['hybrid_retrieval_ms'] / 1000:.2f}s"
+    )
 
-    labels = {
-        "hybrid_retrieval_ms":
-            "Hybrid retrieval",
+    print(
+        f"Jina reranking: "
+        f"{timings['reranking_ms'] / 1000:.2f}s"
+    )
 
-        "reranking_ms":
-            "Jina reranking",
+    print(
+        f"Context + prompt: "
+        f"{timings['context_prompt_ms'] / 1000:.4f}s"
+    )
 
-        "context_prompt_ms":
-            "Context + prompt",
+    print(
+        f"LLM client: "
+        f"{timings['llm_client_ms'] / 1000:.4f}s"
+    )
 
-        "llm_client_ms":
-            "LLM client",
+    print(
+        f"LLM generation: "
+        f"{timings['llm_generation_ms'] / 1000:.2f}s"
+    )
 
-        "llm_generation_ms":
-            "LLM generation",
-
-        "response_build_ms":
-            "Response build"
-    }
-
-    for key, label in labels.items():
-
-        value = timings[
-            key
-        ]
-
-        percentage = (
-            value
-            / total_ms
-            * 100
-        )
-
-        print(
-            f"{label:<20}"
-            f"{value / 1000:>8.2f} s"
-            f"   "
-            f"{percentage:>6.2f}%"
-        )
-
+    print(
+        f"Response build: "
+        f"{timings['response_build_ms'] / 1000:.4f}s"
+    )
 
     print(
         "------------------------------"
     )
 
     print(
-        f"{'TOTAL':<20}"
-        f"{total_ms / 1000:>8.2f} s"
+        f"TOTAL: "
+        f"{timings['total_ms'] / 1000:.2f}s"
     )

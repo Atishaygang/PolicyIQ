@@ -1,0 +1,218 @@
+[
+  {
+    "question_id": "Q001",
+    "faithfulness": 2,
+    "answer_relevance": 2,
+    "citation_correctness": "PASS",
+    "citation_completeness": "PASS",
+    "refusal_correct": null,
+    "notes": "Correct 75% CTL threshold; answer is grounded and directly supported by retrieved motor-policy clauses."
+  },
+  {
+    "question_id": "Q002",
+    "faithfulness": 2,
+    "answer_relevance": 2,
+    "citation_correctness": "PASS",
+    "citation_completeness": "PASS",
+    "refusal_correct": null,
+    "notes": "Correct 50% depreciation rate for the listed parts. Scope caveat is overly cautious but does not change the correct answer."
+  },
+  {
+    "question_id": "Q003",
+    "faithfulness": null,
+    "answer_relevance": 0,
+    "citation_correctness": null,
+    "citation_completeness": null,
+    "refusal_correct": false,
+    "notes": "False refusal. Known retrieval/embedding-ranking limitation: the correct Optima Secure notification clause exists in DOC004 p49 but is absent from the final Top-5."
+  },
+  {
+    "question_id": "Q004",
+    "faithfulness": null,
+    "answer_relevance": 0,
+    "citation_correctness": null,
+    "citation_completeness": null,
+    "refusal_correct": false,
+    "notes": "False refusal on an answerable Optima Secure free-look question; required evidence was not present in the final retrieved context."
+  },
+  {
+    "question_id": "Q005",
+    "faithfulness": 2,
+    "answer_relevance": 2,
+    "citation_correctness": "PASS",
+    "citation_completeness": "PASS",
+    "refusal_correct": null,
+    "notes": "Correctly states the IRDAI Motor Insurance FAQ maximum NCB of 50% and cites the supporting FAQ evidence."
+  },
+  {
+    "question_id": "Q006",
+    "faithfulness": 2,
+    "answer_relevance": 2,
+    "citation_correctness": "PASS",
+    "citation_completeness": "PASS",
+    "refusal_correct": null,
+    "notes": "Correctly gives 7 days for the applicable free-look refund rule. DOC010 provides valid evidence even though the original golden annotations did not fully represent this later corpus document; the Life 4-day distinction is explicitly scoped."
+  },
+  {
+    "question_id": "Q007",
+    "faithfulness": 2,
+    "answer_relevance": 2,
+    "citation_correctness": "PASS",
+    "citation_completeness": "PASS",
+    "refusal_correct": null,
+    "notes": "Correctly states that a general insurer cannot refuse a liability-only motor third-party policy; directly supported by the cited regulation."
+  },
+  {
+    "question_id": "Q008",
+    "faithfulness": null,
+    "answer_relevance": 0,
+    "citation_correctness": null,
+    "citation_completeness": null,
+    "refusal_correct": false,
+    "notes": "False refusal on an answerable benchmark question. V4 consistency testing showed the frozen Top-5 did not establish the own-damage intoxication consequence; classify as retrieval/context insufficiency, with prompt relaxation rejected because it produced unsupported coverage conclusions."
+  },
+  {
+    "question_id": "Q009",
+    "faithfulness": 2,
+    "answer_relevance": 2,
+    "citation_correctness": "PASS",
+    "citation_completeness": "PASS",
+    "refusal_correct": null,
+    "notes": "Directly answers that police must also be informed and supports the conclusion with theft/criminal-act clauses requiring immediate police notice."
+  },
+  {
+    "question_id": "Q010",
+    "faithfulness": 2,
+    "answer_relevance": 2,
+    "citation_correctness": "PASS",
+    "citation_completeness": "PASS",
+    "refusal_correct": null,
+    "notes": "Correctly explains that earned NCB can be retained when changing insurers at renewal, subject to proof of entitlement."
+  },
+  {
+    "question_id": "Q011",
+    "faithfulness": 1,
+    "answer_relevance": 2,
+    "citation_correctness": "PARTIAL",
+    "citation_completeness": "PARTIAL",
+    "refusal_correct": null,
+    "notes": "The answer is useful and likely correct, but it bridges separate evidence for cashless rejection and reimbursement procedure without a retrieved clause explicitly linking rejection to reimbursement eligibility."
+  },
+  {
+    "question_id": "Q012",
+    "faithfulness": 2,
+    "answer_relevance": 2,
+    "citation_correctness": "PASS",
+    "citation_completeness": "PASS",
+    "refusal_correct": null,
+    "notes": "Correctly applies the 60-month health-insurance moratorium and preserves the fraud exception and enhanced-sum-insured qualification."
+  },
+  {
+    "question_id": "Q013",
+    "faithfulness": 2,
+    "answer_relevance": 2,
+    "citation_correctness": "PASS",
+    "citation_completeness": "PASS",
+    "refusal_correct": null,
+    "notes": "Correctly states the mandatory five-year third-party term for a new two-wheeler with supporting circular/FAQ evidence."
+  },
+  {
+    "question_id": "Q014",
+    "faithfulness": 2,
+    "answer_relevance": 2,
+    "citation_correctness": "PASS",
+    "citation_completeness": "PASS",
+    "refusal_correct": null,
+    "notes": "Correctly answers that necessary claim documents should be called for at one go rather than piecemeal, with direct regulatory support."
+  },
+  {
+    "question_id": "Q015",
+    "faithfulness": 2,
+    "answer_relevance": 2,
+    "citation_correctness": "PASS",
+    "citation_completeness": "PASS",
+    "refusal_correct": null,
+    "notes": "Answers both parts: three-year mandatory third-party cover for a new private car and no annual liability-only option described in the cited consumer FAQ."
+  },
+  {
+    "question_id": "Q016",
+    "faithfulness": 2,
+    "answer_relevance": 1,
+    "citation_correctness": "PASS",
+    "citation_completeness": "PASS",
+    "refusal_correct": null,
+    "notes": "Grounded and useful, but only partially aligned with the second part of the benchmark question: it emphasizes surveyor/document timing rather than the broader IRDAI claim-document handling duty expected by the benchmark."
+  },
+  {
+    "question_id": "Q017",
+    "faithfulness": 2,
+    "answer_relevance": 2,
+    "citation_correctness": "PASS",
+    "citation_completeness": "PASS",
+    "refusal_correct": null,
+    "notes": "Strong multi-document alignment answer: both policy and regulations support the 60-month moratorium and related qualifications."
+  },
+  {
+    "question_id": "Q018",
+    "faithfulness": null,
+    "answer_relevance": 0,
+    "citation_correctness": null,
+    "citation_completeness": null,
+    "refusal_correct": false,
+    "notes": "False refusal. The answerable multi-document question was not supported by the final Top-5 context; planned-hospitalization notice evidence was not retrieved."
+  },
+  {
+    "question_id": "Q019",
+    "faithfulness": 2,
+    "answer_relevance": 1,
+    "citation_correctness": "PASS",
+    "citation_completeness": "PASS",
+    "refusal_correct": null,
+    "notes": "The HDFC deductible mechanics are well supported, but the IRDAI side gives a loss-participation instruction to explain deductibles rather than the fuller general deductible definition expected from the FAQ. Treat as substantively useful but incomplete."
+  },
+  {
+    "question_id": "Q020",
+    "faithfulness": null,
+    "answer_relevance": null,
+    "citation_correctness": null,
+    "citation_completeness": null,
+    "refusal_correct": true,
+    "notes": "Correct refusal: future claim approval cannot be determined from the corpus."
+  },
+  {
+    "question_id": "Q021",
+    "faithfulness": null,
+    "answer_relevance": null,
+    "citation_correctness": null,
+    "citation_completeness": null,
+    "refusal_correct": true,
+    "notes": "Correct refusal: an exact future rupee payout cannot be determined from the supplied documents."
+  },
+  {
+    "question_id": "Q022",
+    "faithfulness": null,
+    "answer_relevance": null,
+    "citation_correctness": null,
+    "citation_completeness": null,
+    "refusal_correct": true,
+    "notes": "Correct refusal: an exact future premium increase of 18% is unsupported."
+  },
+  {
+    "question_id": "Q023",
+    "faithfulness": null,
+    "answer_relevance": null,
+    "citation_correctness": null,
+    "citation_completeness": null,
+    "refusal_correct": true,
+    "notes": "Correct refusal: the corpus does not provide current-location garage speed/availability information."
+  },
+  {
+    "question_id": "Q024",
+    "faithfulness": null,
+    "answer_relevance": null,
+    "citation_correctness": null,
+    "citation_completeness": null,
+    "refusal_correct": true,
+    "notes": "Correct refusal: a numeric probability of a future IRDAI rule change is not supported by the corpus."
+  }
+]
