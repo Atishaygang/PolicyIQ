@@ -1,10 +1,10 @@
 from functools import lru_cache
 from langchain_chroma import Chroma
-
+from config import PROCESSED_DATA_DIR
 from src.retrieval.embeddings import get_embed_model
 
 
-PERSIST_DIRECTORY = r"D:\Policy_IQ\data\processed"
+PERSIST_DIRECTORY = PROCESSED_DATA_DIR
 
 
 @lru_cache(maxsize=1)
