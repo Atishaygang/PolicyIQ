@@ -1,35 +1,58 @@
 import json
+import time
 from pathlib import Path
 
-from src.retrieval.reranker import hybrid_reranked_search
+from src.retrieval.hybrid_retriever import hybrid_search
+from src.retrieval.reranker import rerank_documents
 
 
-QUESTIONS_PATH = Path("evaluation/questions.json")
+QUESTIONS_PATH = Path(
+    "evaluation/questions.json"
+)
 
 
 def load_questions():
-    with open(QUESTIONS_PATH, "r", encoding="utf-8") as file:
+
+    with open(
+        QUESTIONS_PATH,
+        "r",
+        encoding="utf-8"
+    ) as file:
+
         data = json.load(file)
 
     return data["questions"]
 
 
 def normalize_pages(page_value):
-    if isinstance(page_value, list):
+
+    if isinstance(
+        page_value,
+        list
+    ):
         return page_value
 
     return [page_value]
 
 
 def get_expected_pairs(question):
+
     expected_pairs = set()
 
-    for evidence in question["expected_evidence"]:
-        document_id = evidence["document_id"]
+    for evidence in question[
+        "expected_evidence"
+    ]:
 
-        pages = normalize_pages(evidence["page"])
+        document_id = evidence[
+            "document_id"
+        ]
+
+        pages = normalize_pages(
+            evidence["page"]
+        )
 
         for page in pages:
+
             expected_pairs.add(
                 (
                     document_id,
@@ -40,27 +63,58 @@ def get_expected_pairs(question):
     return expected_pairs
 
 
-def get_retrieved_pairs(documents):
+def get_retrieved_pairs(
+    documents
+):
+
     return [
         (
-            doc.metadata["document_id"],
-            doc.metadata["pdf_page"]
+            doc.metadata[
+                "document_id"
+            ],
+            doc.metadata[
+                "pdf_page"
+            ]
         )
         for doc in documents
     ]
 
 
-def evaluate_question(question, final_k=20):
-    retrieved_documents = hybrid_reranked_search(
+def evaluate_question(
+    question
+):
+
+    start = time.perf_counter()
+
+    # ==========================================
+    # Exact same runtime retrieval path
+    # ==========================================
+
+    hybrid_documents = hybrid_search(
         query=question["question"],
-        candidate_k=5,
-        final_k=final_k
+        dense_k=10,
+        bm25_k=10,
+        final_k=10
     )
 
-    expected_pairs = get_expected_pairs(question)
+    documents = rerank_documents(
+        query=question["question"],
+        documents=hybrid_documents,
+        top_n=5
+    )
 
-    retrieved_pairs = get_retrieved_pairs(
-        retrieved_documents
+    end = time.perf_counter()
+
+    expected_pairs = (
+        get_expected_pairs(
+            question
+        )
+    )
+
+    retrieved_pairs = (
+        get_retrieved_pairs(
+            documents
+        )
     )
 
     hit_ranks = []
@@ -69,8 +123,11 @@ def evaluate_question(question, final_k=20):
         retrieved_pairs,
         start=1
     ):
+
         if pair in expected_pairs:
-            hit_ranks.append(rank)
+            hit_ranks.append(
+                rank
+            )
 
     first_hit_rank = (
         min(hit_ranks)
@@ -79,22 +136,46 @@ def evaluate_question(question, final_k=20):
     )
 
     return {
-        "question_id": question["question_id"],
-        "category": question["category"],
-        "question": question["question"],
-        "expected_pairs": list(expected_pairs),
-        "retrieved_pairs": retrieved_pairs,
-        "first_hit_rank": first_hit_rank
+        "question_id":
+            question["question_id"],
+
+        "category":
+            question["category"],
+
+        "question":
+            question["question"],
+
+        "expected_pairs":
+            list(expected_pairs),
+
+        "retrieved_pairs":
+            retrieved_pairs,
+
+        "first_hit_rank":
+            first_hit_rank,
+
+        "latency_seconds":
+            end - start
     }
 
 
-def calculate_hit_at_k(results, k):
+def calculate_hit_at_k(
+    results,
+    k
+):
+
     hits = 0
 
     for result in results:
-        rank = result["first_hit_rank"]
 
-        if rank is not None and rank <= k:
+        rank = result[
+            "first_hit_rank"
+        ]
+
+        if (
+            rank is not None
+            and rank <= k
+        ):
             hits += 1
 
     total = len(results)
@@ -113,6 +194,7 @@ def calculate_hit_at_k(results, k):
 
 
 def main():
+
     questions = load_questions()
 
     answerable_questions = [
@@ -123,33 +205,55 @@ def main():
 
     results = []
 
+    print(
+        "\n=============================="
+    )
+    print(
+        "POLICYIQ FP32 RERANKER EVAL"
+    )
+    print(
+        "=============================="
+    )
+
     for question in answerable_questions:
+
         result = evaluate_question(
-            question,
-            final_k=5
+            question
         )
 
-        results.append(result)
-
-        print("\n==============================")
-        print(result["question_id"])
-        print("==============================")
+        results.append(
+            result
+        )
 
         print(
-            "Expected:",
-            result["expected_pairs"]
+            f"\n{result['question_id']}"
         )
 
         print(
             "First Hit Rank:",
-            result["first_hit_rank"]
+            result[
+                "first_hit_rank"
+            ]
         )
 
-    print("\n==============================")
-    print("HYBRID + RERANKER RESULTS")
-    print("==============================")
+        print(
+            "Latency:",
+            f"{result['latency_seconds']:.2f}s"
+        )
+
+
+    print(
+        "\n=============================="
+    )
+    print(
+        "FP32 RETRIEVAL RESULTS"
+    )
+    print(
+        "=============================="
+    )
 
     for k in [1, 3, 5]:
+
         metric = calculate_hit_at_k(
             results,
             k
@@ -159,8 +263,29 @@ def main():
             f"Hit@{k}: "
             f"{metric['hits']}/"
             f"{metric['total']} "
-            f"= {metric['percentage']:.1f}%"
+            f"= "
+            f"{metric['percentage']:.1f}%"
         )
+
+
+    average_latency = (
+        sum(
+            result[
+                "latency_seconds"
+            ]
+            for result in results
+        )
+        / len(results)
+    )
+
+    print(
+        "\nAverage retrieval + "
+        "reranking latency:"
+    )
+
+    print(
+        f"{average_latency:.2f}s"
+    )
 
 
 if __name__ == "__main__":

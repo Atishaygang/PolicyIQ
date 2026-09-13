@@ -1,5 +1,6 @@
 from functools import lru_cache
 from rank_bm25 import BM25Okapi
+from config import RAW_DATA_DIR, MANIFEST_PATH
 
 from src.ingestion.corpus import load_corpus
 from src.chunking.splitter import split_documents
@@ -9,8 +10,8 @@ from src.chunking.splitter import split_documents
 def build_bm25():
 
     documents = load_corpus(
-        data_dir=r"D:\Policy_IQ\data\raw",
-        manifest_path=r"D:\Policy_IQ\data\menifest.csv"
+    data_dir=RAW_DATA_DIR,
+    manifest_path=MANIFEST_PATH
     )
 
     chunks = split_documents(

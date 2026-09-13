@@ -6,7 +6,7 @@ def reciprocal_rank_fusion(
     dense_results,
     bm25_results,
     k=60,
-    top_n=5
+    top_n=10
 ):
     scores = {}
     documents = {}
@@ -77,9 +77,9 @@ def reciprocal_rank_fusion(
 
 def hybrid_search(
     query,
-    dense_k=20,
-    bm25_k=20,
-    final_k=5
+    dense_k=10,
+    bm25_k=10,
+    final_k=10
 ):
     dense_results = retrieve_documents(
         query=query,
@@ -106,9 +106,9 @@ if __name__ == "__main__":
 
     results = hybrid_search(
         query=query,
-        dense_k=20,
-        bm25_k=20,
-        final_k=5
+        dense_k=10,
+        bm25_k=10,
+        final_k=10
     )
 
     for index, doc in enumerate(results, start=1):

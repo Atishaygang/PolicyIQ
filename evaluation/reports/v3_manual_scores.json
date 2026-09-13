@@ -1,0 +1,273 @@
+{
+  "run_name": "policyiq_v3_manual_scores",
+  "scored_against": "policyiq_v3_baseline",
+  "scoring_method": "Manual review of generated answer against frozen retrieved context and golden evaluation expectations.",
+  "rubric": {
+    "faithfulness": {
+      "2": "fully grounded",
+      "1": "partially grounded / unsupported inference / misinterpretation",
+      "0": "materially unsupported",
+      "null": "not applicable for pure refusal"
+    },
+    "answer_relevance": {
+      "2": "direct and complete",
+      "1": "relevant but incomplete/indirect",
+      "0": "incorrect, irrelevant, or false refusal",
+      "null": "not scored for correct unanswerable refusal"
+    },
+    "citation_correctness": [
+      "PASS",
+      "PARTIAL",
+      "FAIL",
+      null
+    ],
+    "citation_completeness": [
+      "PASS",
+      "PARTIAL",
+      "FAIL",
+      null
+    ],
+    "refusal_correct": "true=correct refusal; false=false refusal on answerable question; null=no refusal"
+  },
+  "summary": {
+    "total_questions": 24,
+    "answerable_questions": 19,
+    "unanswerable_questions": 5,
+    "mean_faithfulness_out_of_2": 1.75,
+    "mean_answer_relevance_out_of_2": 1.368,
+    "citation_correctness": {
+      "PASS": 13,
+      "PARTIAL": 3
+    },
+    "citation_completeness": {
+      "PASS": 12,
+      "PARTIAL": 4
+    },
+    "correct_unanswerable_refusals": "5/5",
+    "false_refusals_on_answerable_questions": 4,
+    "false_refusal_question_ids": [
+      "Q003",
+      "Q004",
+      "Q008",
+      "Q018"
+    ]
+  },
+  "scores": [
+    {
+      "question_id": "Q001",
+      "faithfulness": 2,
+      "answer_relevance": 2,
+      "citation_correctness": "PASS",
+      "citation_completeness": "PASS",
+      "refusal_correct": null,
+      "notes": "Correct 75% IDV CTL threshold; bundled-policy evidence is directly present."
+    },
+    {
+      "question_id": "Q002",
+      "faithfulness": 2,
+      "answer_relevance": 2,
+      "citation_correctness": "PASS",
+      "citation_completeness": "PASS",
+      "refusal_correct": null,
+      "notes": "Correct 50% depreciation with direct supporting policy evidence."
+    },
+    {
+      "question_id": "Q003",
+      "faithfulness": null,
+      "answer_relevance": 0,
+      "citation_correctness": null,
+      "citation_completeness": null,
+      "refusal_correct": false,
+      "notes": "False refusal; required 24-hour/before-discharge evidence did not reach final Top 5."
+    },
+    {
+      "question_id": "Q004",
+      "faithfulness": null,
+      "answer_relevance": 0,
+      "citation_correctness": null,
+      "citation_completeness": null,
+      "refusal_correct": false,
+      "notes": "False refusal; expected 30-day free-look evidence was not retrieved."
+    },
+    {
+      "question_id": "Q005",
+      "faithfulness": 2,
+      "answer_relevance": 2,
+      "citation_correctness": "PASS",
+      "citation_completeness": "PASS",
+      "refusal_correct": null,
+      "notes": "Correct 50% maximum NCB; DOC009 page 2 directly supports it."
+    },
+    {
+      "question_id": "Q006",
+      "faithfulness": 2,
+      "answer_relevance": 2,
+      "citation_correctness": "PASS",
+      "citation_completeness": "PASS",
+      "refusal_correct": null,
+      "notes": "Correct 7-day refund rule; cited retrieved sources support the answer."
+    },
+    {
+      "question_id": "Q007",
+      "faithfulness": 2,
+      "answer_relevance": 2,
+      "citation_correctness": "PASS",
+      "citation_completeness": "PASS",
+      "refusal_correct": null,
+      "notes": "Correct liability-only underwriting obligation; directly supported by DOC007 page 8."
+    },
+    {
+      "question_id": "Q008",
+      "faithfulness": 1,
+      "answer_relevance": 0,
+      "citation_correctness": "PARTIAL",
+      "citation_completeness": "PARTIAL",
+      "refusal_correct": false,
+      "notes": "False refusal / interpretation failure. Intoxication wording appears in retrieved motor-policy chunks, but the answer says the excerpts do not establish the own-damage effect."
+    },
+    {
+      "question_id": "Q009",
+      "faithfulness": 1,
+      "answer_relevance": 2,
+      "citation_correctness": "PASS",
+      "citation_completeness": "PARTIAL",
+      "refusal_correct": null,
+      "notes": "Correct conclusion, but cited evidence clearly supports police notice more strongly than insurer-notification, leaving citation coverage incomplete."
+    },
+    {
+      "question_id": "Q010",
+      "faithfulness": 2,
+      "answer_relevance": 2,
+      "citation_correctness": "PASS",
+      "citation_completeness": "PASS",
+      "refusal_correct": null,
+      "notes": "Correct NCB portability answer with direct FAQ support."
+    },
+    {
+      "question_id": "Q011",
+      "faithfulness": 1,
+      "answer_relevance": 1,
+      "citation_correctness": "PARTIAL",
+      "citation_completeness": "PARTIAL",
+      "refusal_correct": null,
+      "notes": "Directionally correct, but argues from absence instead of clearly using the retrieved reimbursement pathway; weaker than the golden answer."
+    },
+    {
+      "question_id": "Q012",
+      "faithfulness": 2,
+      "answer_relevance": 2,
+      "citation_correctness": "PASS",
+      "citation_completeness": "PASS",
+      "refusal_correct": null,
+      "notes": "Correct 60-month moratorium, fraud exception, and enhanced-sum-insured nuance."
+    },
+    {
+      "question_id": "Q013",
+      "faithfulness": 2,
+      "answer_relevance": 2,
+      "citation_correctness": "PASS",
+      "citation_completeness": "PASS",
+      "refusal_correct": null,
+      "notes": "Correct five-year third-party term for new two-wheelers."
+    },
+    {
+      "question_id": "Q014",
+      "faithfulness": 2,
+      "answer_relevance": 2,
+      "citation_correctness": "PASS",
+      "citation_completeness": "PASS",
+      "refusal_correct": null,
+      "notes": "Correct at-one-go claim-document requirement; directly supported by DOC006 page 25."
+    },
+    {
+      "question_id": "Q015",
+      "faithfulness": 1,
+      "answer_relevance": 1,
+      "citation_correctness": "PARTIAL",
+      "citation_completeness": "PARTIAL",
+      "refusal_correct": null,
+      "notes": "Gets the intended conclusion, but the decisive FAQ sentence is truncated in retrieved context and the answer partly relies on inference."
+    },
+    {
+      "question_id": "Q016",
+      "faithfulness": 2,
+      "answer_relevance": 1,
+      "citation_correctness": "PASS",
+      "citation_completeness": "PASS",
+      "refusal_correct": null,
+      "notes": "Grounded, but incomplete: it answers notification and surveyor handling rather than the specific IRDAI document-governance requirement in the golden answer."
+    },
+    {
+      "question_id": "Q017",
+      "faithfulness": 2,
+      "answer_relevance": 2,
+      "citation_correctness": "PASS",
+      "citation_completeness": "PASS",
+      "refusal_correct": null,
+      "notes": "Strong multi-document synthesis on the 60-month moratorium."
+    },
+    {
+      "question_id": "Q018",
+      "faithfulness": null,
+      "answer_relevance": 0,
+      "citation_correctness": null,
+      "citation_completeness": null,
+      "refusal_correct": false,
+      "notes": "False refusal; final Top 5 omitted the required planned-hospitalization notice and relevant regulatory evidence."
+    },
+    {
+      "question_id": "Q019",
+      "faithfulness": 2,
+      "answer_relevance": 1,
+      "citation_correctness": "PASS",
+      "citation_completeness": "PASS",
+      "refusal_correct": null,
+      "notes": "Grounded deductible discussion, but IRDAI portion answers CIS disclosure rather than the golden FAQ definition."
+    },
+    {
+      "question_id": "Q020",
+      "faithfulness": null,
+      "answer_relevance": null,
+      "citation_correctness": null,
+      "citation_completeness": null,
+      "refusal_correct": true,
+      "notes": "Correct refusal: future specific claim approval cannot be determined."
+    },
+    {
+      "question_id": "Q021",
+      "faithfulness": null,
+      "answer_relevance": null,
+      "citation_correctness": null,
+      "citation_completeness": null,
+      "refusal_correct": true,
+      "notes": "Correct refusal: exact future rupee payout cannot be determined."
+    },
+    {
+      "question_id": "Q022",
+      "faithfulness": null,
+      "answer_relevance": null,
+      "citation_correctness": null,
+      "citation_completeness": null,
+      "refusal_correct": true,
+      "notes": "Correct refusal: no evidence for an exact 18% future premium increase."
+    },
+    {
+      "question_id": "Q023",
+      "faithfulness": null,
+      "answer_relevance": null,
+      "citation_correctness": null,
+      "citation_completeness": null,
+      "refusal_correct": true,
+      "notes": "Correct refusal: no live location, garage availability, or repair-time data."
+    },
+    {
+      "question_id": "Q024",
+      "faithfulness": null,
+      "answer_relevance": null,
+      "citation_correctness": null,
+      "citation_completeness": null,
+      "refusal_correct": true,
+      "notes": "Correct refusal: no probability forecast for future IRDAI rule changes."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "total_queries": 24,
+  "average_latency_ms": 104933.21,
+  "median_latency_ms": 99970.95,
+  "p95_latency_ms": 163274.25,
+  "minimum_latency_ms": 68398.03,
+  "maximum_latency_ms": 166200.97,
+  "average_latency_seconds": 104.93,
+  "median_latency_seconds": 99.97,
+  "p95_latency_seconds": 163.27
+}

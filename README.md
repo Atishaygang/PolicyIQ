@@ -1,399 +1,618 @@
-# PolicyIQ — Insurance Document Intelligence with RAG
+# PolicyIQ
 
-> An evidence-first Retrieval-Augmented Generation system for insurance policies and regulatory documents.
+PolicyIQ is a production-style insurance document intelligence system built with grounded Retrieval-Augmented Generation (RAG).
+
+It answers questions from a curated corpus of authentic insurance policies, FAQs, IRDAI regulations, circulars, and guidelines.
+
+> Retrieve evidence first, answer only from that evidence, and abstain when the evidence is insufficient.
+
+## Current Status
+
+**Current version: V5 — Production API & Serving Layer**
+
+Completed:
+
+- PDF ingestion and metadata enrichment
+- document cleaning and chunking
+- multilingual dense retrieval
+- BM25 sparse retrieval
+- Reciprocal Rank Fusion
+- Jina reranking
+- grounded LLM generation
+- source citations
+- explicit abstention behavior
+- golden-set evaluation
+- latency profiling and hardening
+- FastAPI serving layer
+- Pydantic schemas
+- startup preloading
+- `/health` and `/ready`
+- production error handling
+- API tests
+- Dockerized backend
+- portable runtime paths
+
+V5 intentionally does not retune the frozen RAG core. It focuses on serving, reliability, portability, and deployment.
 
 ---
-
-## Overview
-
-PolicyIQ is a modular RAG system built over real insurance-policy and IRDAI documents. Its goal is not merely to generate plausible answers, but to preserve evidence provenance, retrieve relevant policy wording, generate grounded responses, provide source citations, and abstain when the corpus does not support the question.
-
-Instead of treating RAG as a single framework call, PolicyIQ validates each stage:
-
-```text
-Ingestion
-  ↓
-Cleaning
-  ↓
-Metadata
-  ↓
-Chunking
-  ↓
-Evidence Coverage
-  ↓
-Embeddings
-  ↓
-Vector Retrieval
-  ↓
-Grounded Prompt
-  ↓
-LLM
-  ↓
-Answer + Citations
-```
-
-## V1 Snapshot
-
-```text
-Insurance / regulatory PDFs: 11
-Raw PDF pages: 431
-Usable cleaned pages: 430
-Chunk size / overlap: 1200 / 200
-Final chunks: 1,144
-Embedding dimension: 384
-Golden questions: 24
-Answerable golden questions: 19
-Golden evidence coverage: 100%
-Vector store: Chroma
-Generation: GPT-OSS-120B via Hugging Face
-```
-
-## Why PolicyIQ
-
-Insurance documents are difficult RAG inputs because they contain legal wording, definitions, exclusions, conditions, tables, repeated headers/footers, similar clauses across products, and regulatory guidance that must not be confused with insurer-specific wording.
-
-PolicyIQ therefore treats provenance, validation, and failure analysis as first-class requirements.
 
 ## Architecture
 
 ```text
-11 PDFs
-  ↓
-Page-Level Loading
-  ↓
-Conservative Cleaning
-  ↓
-430 Usable Pages
-  ↓
-Manifest Metadata
-  ↓
-Recursive Chunking 1200/200
-  ↓
-1,144 Chunks
-  ↓
-Multilingual MiniLM Embeddings (384-D)
-  ↓
-Persistent Chroma
-  ↓
-Dense Top-K Retrieval
-  ↓
-Explicit [SOURCE N] Context
-  ↓
-Grounded Prompt
-  ↓
-GPT-OSS-120B
-  ↓
-Answer + Source Citations
+User Question
+     ↓
+FastAPI /api/v1/query
+     ↓
+Dense Top 10 + BM25 Top 10
+     ↓
+Reciprocal Rank Fusion
+     ↓
+Hybrid Top 10
+     ↓
+Jina Reranker v3
+     ↓
+Top 5 evidence chunks
+     ↓
+Grounded prompt
+     ↓
+Hugging Face hosted LLM
+     ↓
+Answer + Sources + Timings
 ```
 
-See `docs/decisions/007-Architecture.md` for the detailed design.
+---
 
-## Repository Structure
+## Corpus
 
-```text
-Policy_IQ/
-├── data/
-│   ├── raw/
-│   └── processed/
-├── docs/
-│   └── decisions/
-├── evaluation/
-│   ├── questions.json
-│   └── evidence_coverage_results.json
-├── src/
-│   ├── ingestion/
-│   ├── chunking/
-│   ├── retrieval/
-│   ├── evaluation/
-│   └── rag/
-├── tests/
-├── .env.example
-├── .gitignore
-├── config.py
-├── requirements.txt
-└── README.md
-```
+PolicyIQ uses 11 authentic public insurance documents, including HDFC ERGO policies, IRDAI regulations, circulars, FAQs, and motor-insurance guidelines.
 
-## Corpus and Provenance
+| Metric | Value |
+|---|---:|
+| PDFs | 11 |
+| Raw page documents | 431 |
+| Usable page documents | 430 |
+| Chunks | 1,144 |
+| Chunk size | 1,200 chars |
+| Chunk overlap | 200 chars |
+| Average chunk length | ~979 chars |
+| Median chunk length | ~1,139 chars |
 
-The V1 corpus contains **11 real insurance/regulatory PDFs**, including motor-policy wording, health-policy wording, IRDAI regulations, master circulars, motor-insurance FAQ content, and service-provider guidance.
+---
 
-Stable internal IDs (`DOC001` … `DOC011`) are used so evaluation and provenance do not depend on filenames.
+## Retrieval Stack
 
-Each page/chunk preserves metadata such as:
+### Dense Retrieval
 
-```text
-document_id
-filename
-document_type
-issuer
-insurer
-product
-category
-pdf_page
-year
-file_path
-```
-
-## Cleaning
-
-Cleaning is conservative and document-local. PolicyIQ removes repeated headers/footers, boundary page labels, matching standalone page numbers, and empty lines while avoiding aggressive numeric deletion.
-
-A two-stage cleaning fix was introduced after discovering that page numbers could survive if boundary positions were calculated before header removal.
-
-See `005-document-cleaning.md`.
-
-## Chunking
-
-Final V1 baseline:
-
-```text
-RecursiveCharacterTextSplitter
-chunk_size = 1200
-chunk_overlap = 200
-```
-
-Final statistics:
-
-```text
-Total chunks: 1,144
-Average characters: 979.05
-Median characters: 1,139
-Minimum characters: 74
-Maximum characters: 1,199
-Chunks under 200 chars: 13
-```
-
-Most importantly, the strategy was validated against golden evidence before embeddings were introduced.
-
-## Golden Evidence Coverage
-
-```text
-Answerable questions: 19
-PASS: 19
-PARTIAL: 0
-FAIL: 0
-Full evidence coverage: 100%
-```
-
-This established that the current ingestion + cleaning + chunking pipeline preserved all annotated answer evidence.
-
-## Embeddings
-
-Model:
+Embedding model:
 
 ```text
 sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
 ```
 
-Configuration:
+- CPU inference
+- normalized embeddings
+- 384-dimensional vectors
+- Chroma vector store
+
+### Sparse Retrieval
+
+BM25 runs over the same cleaned and chunked corpus.
 
 ```text
-CPU
-384 dimensions
-normalized embeddings
+rank-bm25
 ```
 
-Semantic smoke test:
+### Fusion
+
+Dense and BM25 candidates are merged using Reciprocal Rank Fusion.
+
+### Reranking
 
 ```text
-Related similarity: 0.7764
-Unrelated similarity: 0.4419
-Query dimension: 384
+jinaai/jina-reranker-v3
 ```
 
-## Vector Store
+The reranker receives the hybrid candidate set and selects the final Top 5 chunks used by generation.
 
-PolicyIQ uses persistent Chroma.
+---
 
-A duplicate-ingestion bug was discovered when repeated builds against the same collection produced **4,576** vectors instead of **1,144**. Index creation and querying were separated into dedicated modules, and the clean collection now contains exactly **1,144 vectors**.
+## Grounding and Abstention
 
-## Retrieval Evaluation
+The LLM is instructed to answer only from retrieved evidence.
 
-Strict exact-source/page Hit@K is recorded as a diagnostic baseline:
-
-| Metric | Hits | Rate |
-|---|---:|---:|
-| Hit@1 | 6 / 19 | 31.6% |
-| Hit@3 | 8 / 19 | 42.1% |
-| Hit@5 | 12 / 19 | 63.2% |
-| Hit@10 | 12 / 19 | 63.2% |
-| Hit@15 | 14 / 19 | 73.7% |
-| Hit@20 | 14 / 19 | 73.7% |
-
-These numbers are **not presented as final RAG accuracy**. The current golden set does not enumerate every semantically valid alternative chunk, and some questions require evidence from multiple chunks/documents.
-
-See `docs/decisions/008-evaluation.md`.
-
-## Grounded Generation
-
-Retrieved chunks are converted to explicit source blocks:
-
-```text
-[SOURCE 1]
-Document ID: DOC002
-Filename: 2_motor_policy.pdf
-PDF Page: 4
-Content:
-...
-```
-
-The generation prompt requires the LLM to:
-
-- Use only supplied context.
-- Avoid outside knowledge.
-- Avoid invented policy terms or claim decisions.
-- Cite `[SOURCE N]`.
-- Distinguish regulation from insurer policy wording.
-- Avoid merging different policies into a universal rule.
-- Abstain when evidence is insufficient.
-
-## End-to-End V1 Tests
-
-### Exact
-
-```text
-What depreciation applies to plastic parts?
-```
-
-Result: correct **50%** answer with multiple policy citations.
-
-### Semantic
-
-```text
-Will damage be covered if the driver was drunk?
-```
-
-Result: PolicyIQ did not overgeneralize injury-related intoxication clauses into a vehicle-damage conclusion and correctly stated that the available excerpts were insufficient.
-
-### Regulatory
-
-```text
-What obligations does an insurer have regarding policyholder grievances?
-```
-
-Result: grounded regulatory synthesis with citations.
-
-### Unanswerable
-
-```text
-What will HDFC ERGO's share price be next month?
-```
-
-Result:
+If sufficient evidence is not present, PolicyIQ returns:
 
 ```text
 I could not find sufficient information in the provided documents.
 ```
 
-## V1 Capabilities
+This is a valid `200 OK` product response, not an API error.
+
+---
+
+# Version History
+
+## V1 — Core Grounded RAG
+
+V1 established ingestion, cleaning, recursive chunking, embeddings, Chroma, dense retrieval, grounded generation, citations, and abstention.
+
+Strict expected-pair retrieval results:
+
+| K | Hit@K |
+|---:|---:|
+| 1 | 31.6% |
+| 3 | 42.1% |
+| 5 | 63.2% |
+| 10 | 63.2% |
+| 15 | 73.7% |
+| 20 | 73.7% |
+
+---
+
+## V2 — Retrieval Optimization
+
+V2 added:
+
+- BM25
+- hybrid retrieval
+- Reciprocal Rank Fusion
+- Jina reranking
+- query-expansion experiments
+
+Hybrid retrieval improved deeper recall, while reranking improved top-ranked evidence quality.
+
+Query expansion was not made the default because it increased latency and sometimes introduced retrieval noise.
+
+---
+
+## V3 — End-to-End Reliability Evaluation
+
+Golden set: 24 questions
+
+- 7 exact
+- 7 semantic
+- 5 multi-document
+- 5 unanswerable
+
+Frozen V3 quality:
+
+| Metric | Result |
+|---|---:|
+| Faithfulness | 1.75 / 2 |
+| Relevance | 1.368 / 2 |
+| Correct unanswerable refusals | 5 / 5 |
+| False refusals | 4 / 19 |
+| Answerable response rate | 15 / 19 |
+
+Frozen V3 latency:
+
+| Metric | Time |
+|---|---:|
+| Average | 104.93 s |
+| Median | 99.97 s |
+| P95 | 163.27 s |
+| Min | 68.40 s |
+| Max | 166.20 s |
+
+The reranker was the dominant bottleneck.
+
+---
+
+## V4 — Reliability & Performance Hardening
+
+V4 focused on performance and failure analysis without changing the overall RAG architecture.
+
+Frozen V4 latency:
+
+| Metric | V3 | V4 |
+|---|---:|---:|
+| Average | 104.93 s | **21.75 s** |
+| Median | 99.97 s | **19.59 s** |
+| P95 | 163.27 s | **32.47 s** |
+| Min | 68.40 s | **15.20 s** |
+| Max | 166.20 s | **33.91 s** |
+
+Approximate median speedup:
 
 ```text
-✅ Real insurance corpus
-✅ Page-level provenance
-✅ Conservative cleaning
-✅ Manifest-based metadata
-✅ Chunking experiments
-✅ 100% golden evidence coverage
-✅ Multilingual dense embeddings
-✅ Persistent vector store
-✅ Semantic retrieval
-✅ Retrieval diagnostics
-✅ Grounded LLM generation
-✅ Source citations
-✅ Multi-source synthesis
-✅ Unanswerable-query abstention
+~5.1x
 ```
 
-## V1 Limitations
+Frozen V4 quality:
 
-V1 intentionally does not yet include:
+| Metric | Result |
+|---|---:|
+| Faithfulness | 1.93 / 2 |
+| Relevance | 1.474 / 2 |
+| Citation correctness | 14 PASS, 1 PARTIAL |
+| Citation completeness | 14 PASS, 1 PARTIAL |
+| Correct unanswerable refusals | 5 / 5 |
+| False refusals | 4 / 19 |
+| Answerable response rate | 15 / 19 |
 
-- Hybrid BM25 + dense retrieval.
-- Reranking.
-- Query rewriting.
-- Metadata-aware routing.
-- Dynamic Top-K.
-- Parent-child retrieval.
-- Automatic citation verification.
-- Structured Pydantic output.
-- Production FastAPI layer.
-- UI or authentication.
+Important evaluation note: V3 and V4 faithfulness/citation denominators are not identical, so those quality changes should not be treated as perfectly controlled. Relevance uses the same 19-answerable-question denominator.
 
-These are V2+ improvements rather than unfinished V1 fundamentals.
+A relaxed grounding prompt was explicitly rejected after it produced unsupported coverage answers in some runs.
 
-## Running the Project
+---
 
-### Create environment
+## V5 — Production API & Serving Layer
+
+V5 productionizes the frozen evaluated RAG layer.
+
+Added:
+
+- FastAPI
+- Pydantic request/response models
+- `/api/v1/query`
+- startup preloading
+- `/health`
+- `/ready`
+- production-style error handling
+- API tests
+- Docker
+- portable runtime paths
+
+A single Docker run is not a replacement for the frozen V4 benchmark.
+
+Example V5 Docker observation:
+
+```text
+Hybrid retrieval    ~0.09 s
+Jina reranking      ~36.85 s
+LLM generation      ~1.09 s
+Total               ~38.02 s
+```
+
+This is one containerized runtime observation only.
+
+---
+
+# API
+
+## Health
+
+```http
+GET /health
+```
+
+```json
+{
+  "service": "PolicyIQ API",
+  "status": "running",
+  "version": "5.0"
+}
+```
+
+## Readiness
+
+```http
+GET /ready
+```
+
+```json
+{
+  "service": "PolicyIQ API",
+  "ready": true
+}
+```
+
+## Query
+
+```http
+POST /api/v1/query
+```
+
+Request:
+
+```json
+{
+  "question": "What is maximum No Claim Bonus?"
+}
+```
+
+Response shape:
+
+```json
+{
+  "question": "What is maximum No Claim Bonus?",
+  "answer": "...",
+  "sources": [
+    {
+      "document_id": "DOC009",
+      "filename": "Motor Insurance_FAQ.pdf",
+      "page": 2
+    }
+  ],
+  "timings": {
+    "hybrid_retrieval_ms": 0.0,
+    "reranking_ms": 0.0,
+    "context_prompt_ms": 0.0,
+    "llm_client_ms": 0.0,
+    "llm_generation_ms": 0.0,
+    "response_build_ms": 0.0,
+    "total_ms": 0.0
+  }
+}
+```
+
+---
+
+# Project Structure
+
+```text
+Policy_IQ/
+├── src/
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── schemas.py
+│   │   └── dependencies.py
+│   ├── chunking/
+│   ├── evaluation/
+│   ├── ingestion/
+│   ├── rag/
+│   └── retrieval/
+├── data/
+│   ├── raw/
+│   ├── processed/
+│   └── menifest.csv
+├── evaluation/
+│   ├── questions.json
+│   ├── rag_runs/
+│   └── reports/
+├── tests/
+│   └── api/
+├── docs/
+├── config.py
+├── requirements.txt
+├── Dockerfile
+├── .dockerignore
+├── .env.example
+└── README.md
+```
+
+`menifest.csv` is intentionally kept with its existing filename during V5 to avoid unnecessary unrelated changes.
+
+---
+
+# Local Setup
+
+## 1. Create and activate a virtual environment
 
 ```powershell
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 ```
 
-### Install dependencies
+## 2. Install dependencies
 
 ```powershell
 pip install -r requirements.txt
 ```
 
-### Configure secrets
+## 3. Environment variables
 
-Create `.env` from `.env.example`. Never commit `.env`.
+Create `.env`:
 
-### Build vector store
+```env
+HUGGINGFACEHUB_ACCESS_TOKEN=hf_your_token_here
+HF_TOKEN=hf_your_token_here
+```
 
-Run the dedicated build module only when intentionally rebuilding the index.
+Never commit `.env`.
 
-### Run end-to-end RAG
+## 4. Run FastAPI
 
 ```powershell
-python -m src.rag.pipeline
+uvicorn src.api.main:app --host 0.0.0.0 --port 8000
 ```
 
-## Engineering Lessons
-
-1. Retrieval quality starts before embeddings.
-2. Cleaning should be conservative and auditable.
-3. Chunking should be validated against evidence, not intuition.
-4. Persistent vector stores require deliberate build/query separation.
-5. Exact source rank is useful but not identical to semantic answerability.
-6. LLM grounding must prevent clause overgeneralization.
-7. Unanswerable questions are essential hallucination tests.
-8. RAG should be debugged layer by layer.
-
-## V2 Direction
-
-V2 should improve retrieval quality before adding random product features:
+Swagger:
 
 ```text
-Hybrid retrieval
-   +
-Metadata filters
-   +
-Query rewriting
-   +
-Reranking
-   +
-Better relevance judgments
-   +
-Structured responses
-   +
-Citation validation
+http://localhost:8000/docs
 ```
 
-## Status
+---
 
-**PolicyIQ V1: end-to-end RAG baseline operational.**
+# Docker
 
+## Build
 
-V1 — Core RAG ✅ FROZEN
+```powershell
+docker build -t policyiq-backend:v5 .
+```
 
-V2 — Retrieval Optimization 🚧
+## Run
 
-V2.1 Metadata-aware retrieval
-V2.2 BM25 lexical retrieval
-V2.3 Hybrid retrieval
-V2.4 Reranking
-V2.5 Query transformation
-V2.6 Evaluation + final selection
+```powershell
+docker run --name policyiq-v5 --env-file .env -p 8000:8000 policyiq-backend:v5
+```
+
+Useful endpoints:
+
+```text
+http://localhost:8000/health
+http://localhost:8000/ready
+http://localhost:8000/docs
+```
+
+Stop:
+
+```powershell
+docker stop policyiq-v5
+```
+
+Remove:
+
+```powershell
+docker rm policyiq-v5
+```
+
+Recreate:
+
+```powershell
+docker rm -f policyiq-v5
+docker run --name policyiq-v5 --env-file .env -p 8000:8000 policyiq-backend:v5
+```
+
+---
+
+# Portable Runtime Paths
+
+Runtime paths are derived from the project root with `pathlib`.
+
+Conceptually:
+
+```python
+BASE_DIR = Path(__file__).resolve().parent
+DATA_DIR = BASE_DIR / "data"
+RAW_DATA_DIR = DATA_DIR / "raw"
+PROCESSED_DATA_DIR = DATA_DIR / "processed"
+MANIFEST_PATH = DATA_DIR / "menifest.csv"
+```
+
+This allows the same serving code to resolve correctly on both Windows and Linux/Docker.
+
+---
+
+# Testing
+
+Run:
+
+```powershell
+python -m pytest tests/api -v
+```
+
+API tests cover:
+
+- health
+- readiness
+- request validation
+- successful query contract
+- abstention
+- internal service errors
+
+Heavy RAG evaluation is kept separate from lightweight API contract tests.
+
+---
+
+# Error Semantics
+
+## Valid abstention
+
+```text
+HTTP 200
+```
+
+```text
+I could not find sufficient information in the provided documents.
+```
+
+## Not ready
+
+```text
+HTTP 503
+```
+
+## Internal processing failure
+
+```text
+HTTP 500
+```
+
+The public response is generic while the server logs the full traceback.
+
+---
+
+# Startup Preloading
+
+PolicyIQ preloads:
+
+- embedding model
+- vector store
+- BM25 corpus
+- Jina reranker
+- LLM client
+
+This removes initialization work from the first user request.
+
+It does not remove the per-query CPU cost of reranking.
+
+---
+
+# Known Limitations
+
+1. CPU reranking remains the largest latency bottleneck.
+2. Four answerable golden questions still produce false refusals: `Q003`, `Q004`, `Q008`, `Q018`.
+3. Fresh Docker containers may download Hugging Face model files during startup.
+4. Multiple Uvicorn workers are not recommended yet because each worker would load its own model copies.
+5. The live corpus contains documents added after the earliest expected-evidence design, so some valid evidence may exist outside the original golden expected pairs.
+
+---
+
+# Engineering Principles
+
+```text
+Measure before optimizing.
+Freeze evaluated versions.
+Separate retrieval failures from generation failures.
+Do not loosen grounding just to increase answer rate.
+Treat abstention as valid product behavior.
+Do not modify the RAG core while productionizing the serving layer.
+```
+
+Failure diagnosis:
+
+```text
+Answer missing from chunks
+→ ingestion/chunking
+
+Answer exists but is not retrieved
+→ embedding/retrieval/ranking
+
+Correct evidence retrieved but answer is wrong
+→ generation/prompt/LLM
+
+No evidence but model answers
+→ grounding/abstention
+```
+
+---
+
+# Git Milestones
+
+```text
+v1.0   Core grounded RAG
+v2.0   Retrieval optimization
+v3.0   Reliability evaluation
+v4.0   Reliability + performance hardening
+v5.0   Production API + Docker serving
+```
+
+V4 should remain frozen as the evaluated reliability/performance milestone.
+
+V5 development branch:
+
+```text
+v5-production-api
+```
+
+---
+
+# Roadmap
+
+Potential V6:
+
+- LangGraph orchestration
+- tool-based policy lookup
+- controlled multi-step reasoning
+- policy comparison workflows
+- structured claim workflows
+
+LangGraph should only be added if it creates real product value.
+
+---
+
+PolicyIQ is a portfolio and engineering project focused on grounded enterprise-style RAG, evaluation, reliability analysis, API serving, and containerization.

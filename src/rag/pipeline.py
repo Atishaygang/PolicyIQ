@@ -1,4 +1,8 @@
-from src.retrieval.retriever import retrieve_documents
+import time
+
+from src.retrieval.hybrid_retriever import hybrid_search
+from src.retrieval.reranker import rerank_documents
+
 from src.rag.llm import get_llm
 from src.rag.prompt import SYSTEM_PROMPT, USER_PROMPT
 
@@ -11,7 +15,6 @@ def build_context(documents):
         documents,
         start=1
     ):
-
         source = (
             f"[SOURCE {index}]\n"
             f"Document ID: {doc.metadata['document_id']}\n"
@@ -43,40 +46,141 @@ def build_sources(documents):
     return sources
 
 
-
-
-
 def ask_policyiq(question):
 
-    documents = retrieve_documents(
+    total_start = time.perf_counter()
+
+    timings = {}
+
+
+    # ==========================================
+    # Step 1:
+    # Dense + BM25 -> RRF -> Hybrid Top 10
+    # ==========================================
+
+    start = time.perf_counter()
+
+    hybrid_documents = hybrid_search(
         query=question,
-        k=5,
-        metadata_filter= None
-        
+        dense_k=10,
+        bm25_k=10,
+        final_k=10
     )
 
-    context = build_context(documents)
+    timings["hybrid_retrieval_ms"] = (
+        time.perf_counter() - start
+    ) * 1000
+
+
+    # ==========================================
+    # Step 2:
+    # Jina reranker -> Final Top 5
+    # ==========================================
+
+    start = time.perf_counter()
+
+    documents = rerank_documents(
+        query=question,
+        documents=hybrid_documents,
+        top_n=5
+    )
+
+    timings["reranking_ms"] = (
+        time.perf_counter() - start
+    ) * 1000
+
+
+    # ==========================================
+    # Step 3:
+    # Build grounded context + prompt
+    # ==========================================
+
+    start = time.perf_counter()
+
+    context = build_context(
+        documents
+    )
 
     formatted_user_prompt = USER_PROMPT.format(
         context=context,
         question=question
     )
 
+    timings["context_prompt_ms"] = (
+        time.perf_counter() - start
+    ) * 1000
+
+
+    # ==========================================
+    # Step 4:
+    # Get cached LLM client
+    # ==========================================
+
+    start = time.perf_counter()
+
     llm = get_llm()
+
+    timings["llm_client_ms"] = (
+        time.perf_counter() - start
+    ) * 1000
+
+
+    # ==========================================
+    # Step 5:
+    # Generate grounded answer
+    # ==========================================
+
+    start = time.perf_counter()
 
     response = llm.invoke(
         [
-            ("system", SYSTEM_PROMPT),
-            ("human", formatted_user_prompt)
+            (
+                "system",
+                SYSTEM_PROMPT
+            ),
+            (
+                "human",
+                formatted_user_prompt
+            )
         ]
     )
 
-    sources = build_sources(documents)
+    timings["llm_generation_ms"] = (
+        time.perf_counter() - start
+    ) * 1000
+
+
+    # ==========================================
+    # Step 6:
+    # Build final source response
+    # ==========================================
+
+    start = time.perf_counter()
+
+    sources = build_sources(
+        documents
+    )
+
+    timings["response_build_ms"] = (
+        time.perf_counter() - start
+    ) * 1000
+
+
+    # ==========================================
+    # Total end-to-end latency
+    # ==========================================
+
+    timings["total_ms"] = (
+        time.perf_counter() - total_start
+    ) * 1000
+
 
     result = {
         "question": question,
         "answer": response.content,
-        "sources": sources
+        "sources": sources,
+        "retrieved_documents": documents,
+        "timings": timings
     }
 
     return result
@@ -85,20 +189,40 @@ def ask_policyiq(question):
 if __name__ == "__main__":
 
     question = (
-        """What percentage depreciation applies to rubber, nylon, plastic parts, tyres, tubes, batteries and air bags under the standalone private car own-damage policy?"""
+        "What percentage depreciation applies to rubber, nylon, "
+        "plastic parts, tyres, tubes, batteries and air bags under "
+        "the standalone private car own-damage policy?"
     )
 
-    result = ask_policyiq(question)
+    result = ask_policyiq(
+        question
+    )
 
-    print("\n==============================")
-    print("POLICYIQ ANSWER with filter")
-    print("==============================")
 
-    print(result["answer"])
+    print(
+        "\n=============================="
+    )
+    print(
+        "POLICYIQ ANSWER"
+    )
+    print(
+        "=============================="
+    )
 
-    print("\n==============================")
-    print("RETRIEVED SOURCES")
-    print("==============================")
+    print(
+        result["answer"]
+    )
+
+
+    print(
+        "\n=============================="
+    )
+    print(
+        "RETRIEVED SOURCES"
+    )
+    print(
+        "=============================="
+    )
 
     for index, source in enumerate(
         result["sources"],
@@ -111,3 +235,57 @@ if __name__ == "__main__":
             f"| {source['filename']} "
             f"| Page {source['page']}"
         )
+
+
+    print(
+        "\n=============================="
+    )
+    print(
+        "PIPELINE LATENCY"
+    )
+    print(
+        "=============================="
+    )
+
+    timings = result[
+        "timings"
+    ]
+
+    print(
+        f"Hybrid retrieval: "
+        f"{timings['hybrid_retrieval_ms'] / 1000:.2f}s"
+    )
+
+    print(
+        f"Jina reranking: "
+        f"{timings['reranking_ms'] / 1000:.2f}s"
+    )
+
+    print(
+        f"Context + prompt: "
+        f"{timings['context_prompt_ms'] / 1000:.4f}s"
+    )
+
+    print(
+        f"LLM client: "
+        f"{timings['llm_client_ms'] / 1000:.4f}s"
+    )
+
+    print(
+        f"LLM generation: "
+        f"{timings['llm_generation_ms'] / 1000:.2f}s"
+    )
+
+    print(
+        f"Response build: "
+        f"{timings['response_build_ms'] / 1000:.4f}s"
+    )
+
+    print(
+        "------------------------------"
+    )
+
+    print(
+        f"TOTAL: "
+        f"{timings['total_ms'] / 1000:.2f}s"
+    )

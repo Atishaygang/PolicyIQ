@@ -1,0 +1,47 @@
+{
+  "v3_frozen": {
+    "faithfulness": 1.75,
+    "faith_n": 16,
+    "relevance": 1.368,
+    "relevance_n": 19,
+    "cit_pass": 13,
+    "cit_partial": 3,
+    "cit_n": 16,
+    "comp_pass": 12,
+    "comp_partial": 4,
+    "comp_n": 16,
+    "correct_refusals": 5,
+    "false_refusals": 4,
+    "avg_latency": 104.93,
+    "median_latency": 99.97,
+    "p95_latency": 163.27,
+    "min_latency": 68.4,
+    "max_latency": 166.2
+  },
+  "v4_final": {
+    "faithfulness": 1.9333,
+    "faithfulness_denominator": 15,
+    "answer_relevance": 1.4737,
+    "answer_relevance_denominator": 19,
+    "citation_correctness": {
+      "PASS": 14,
+      "PARTIAL": 1,
+      "denominator": 15
+    },
+    "citation_completeness": {
+      "PASS": 14,
+      "PARTIAL": 1,
+      "denominator": 15
+    },
+    "correct_unanswerable_refusals": 5,
+    "false_refusals_answerable": 4,
+    "average_latency_s": 21.75,
+    "median_latency_s": 19.59,
+    "p95_latency_s": 32.47,
+    "min_latency_s": 15.2,
+    "max_latency_s": 33.91,
+    "avg_hybrid_s": 0.05,
+    "avg_reranking_s": 20.84,
+    "avg_llm_s": 0.85
+  }
+}
