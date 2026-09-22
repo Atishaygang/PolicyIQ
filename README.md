@@ -1,70 +1,96 @@
 # PolicyIQ
 
-PolicyIQ is a production-style insurance document intelligence system built with grounded Retrieval-Augmented Generation (RAG).
+> A grounded insurance document intelligence system built to retrieve evidence first, answer from that evidence, and abstain when the documents are insufficient.
 
-It answers questions from a curated corpus of authentic insurance policies, FAQs, IRDAI regulations, circulars, and guidelines.
+PolicyIQ is an end-to-end Retrieval-Augmented Generation (RAG) project built around real public insurance documents. It started as a basic grounded retrieval pipeline and evolved into a measured, evaluated, production-style application with hybrid retrieval, reranking, reliability analysis, FastAPI serving, Dockerized backend execution, and a complete React frontend.
 
-> Retrieve evidence first, answer only from that evidence, and abstain when the evidence is insufficient.
-
-## Current Status
-
-**Current version: V5 — Production API & Serving Layer**
-
-Completed:
-
-- PDF ingestion and metadata enrichment
-- document cleaning and chunking
-- multilingual dense retrieval
-- BM25 sparse retrieval
-- Reciprocal Rank Fusion
-- Jina reranking
-- grounded LLM generation
-- source citations
-- explicit abstention behavior
-- golden-set evaluation
-- latency profiling and hardening
-- FastAPI serving layer
-- Pydantic schemas
-- startup preloading
-- `/health` and `/ready`
-- production error handling
-- API tests
-- Dockerized backend
-- portable runtime paths
-
-V5 intentionally does not retune the frozen RAG core. It focuses on serving, reliability, portability, and deployment.
+The project is now **feature-complete and frozen**. Future learning and experimentation will continue in separate projects rather than changing the evaluated PolicyIQ core.
 
 ---
 
-## Architecture
+## What PolicyIQ does
+
+PolicyIQ lets a user ask insurance questions in natural language and returns:
+
+- a grounded answer,
+- the source documents used,
+- PDF page numbers,
+- request-stage timings,
+- and an explicit abstention when the available evidence is insufficient.
+
+Example question:
 
 ```text
-User Question
-     ↓
-FastAPI /api/v1/query
-     ↓
-Dense Top 10 + BM25 Top 10
-     ↓
+What is the maximum No Claim Bonus?
+```
+
+The system retrieves evidence from the insurance corpus, combines dense and sparse search, reranks the candidate passages, sends only the final evidence to the LLM, and returns the answer with source metadata.
+
+---
+
+## Final Product
+
+```text
+React + Vite Frontend
+        │
+        │ HTTP
+        ▼
+FastAPI Serving Layer
+        │
+        ▼
+Hybrid Retrieval
+Dense + BM25
+        │
+        ▼
 Reciprocal Rank Fusion
-     ↓
-Hybrid Top 10
-     ↓
+        │
+        ▼
 Jina Reranker v3
-     ↓
-Top 5 evidence chunks
-     ↓
-Grounded prompt
-     ↓
-Hugging Face hosted LLM
-     ↓
+        │
+        ▼
+Top-5 Evidence Chunks
+        │
+        ▼
+Grounded LLM Generation
+        │
+        ▼
 Answer + Sources + Timings
 ```
 
+### Product behavior
+
+PolicyIQ is intentionally conservative.
+
+If the retrieved documents do not provide enough evidence, it returns:
+
+```text
+I could not find sufficient information in the provided documents.
+```
+
+Abstention is treated as a valid product behavior, not as an API failure.
+
 ---
 
-## Corpus
+# Project Evolution
 
-PolicyIQ uses 11 authentic public insurance documents, including HDFC ERGO policies, IRDAI regulations, circulars, FAQs, and motor-insurance guidelines.
+PolicyIQ was developed in measured stages rather than as one large build.
+
+## V1 — Core Grounded RAG
+
+The first version established the complete baseline pipeline:
+
+- PDF ingestion
+- metadata enrichment
+- repeated-header/footer cleaning
+- recursive text chunking
+- multilingual sentence-transformer embeddings
+- Chroma vector storage
+- dense retrieval
+- grounded LLM generation
+- source citations
+- strict abstention behavior
+
+### V1 corpus snapshot
 
 | Metric | Value |
 |---|---:|
@@ -72,71 +98,12 @@ PolicyIQ uses 11 authentic public insurance documents, including HDFC ERGO polic
 | Raw page documents | 431 |
 | Usable page documents | 430 |
 | Chunks | 1,144 |
-| Chunk size | 1,200 chars |
-| Chunk overlap | 200 chars |
-| Average chunk length | ~979 chars |
-| Median chunk length | ~1,139 chars |
+| Chunk size | 1,200 characters |
+| Chunk overlap | 200 characters |
+| Average chunk length | ~979 characters |
+| Median chunk length | ~1,139 characters |
 
----
-
-## Retrieval Stack
-
-### Dense Retrieval
-
-Embedding model:
-
-```text
-sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
-```
-
-- CPU inference
-- normalized embeddings
-- 384-dimensional vectors
-- Chroma vector store
-
-### Sparse Retrieval
-
-BM25 runs over the same cleaned and chunked corpus.
-
-```text
-rank-bm25
-```
-
-### Fusion
-
-Dense and BM25 candidates are merged using Reciprocal Rank Fusion.
-
-### Reranking
-
-```text
-jinaai/jina-reranker-v3
-```
-
-The reranker receives the hybrid candidate set and selects the final Top 5 chunks used by generation.
-
----
-
-## Grounding and Abstention
-
-The LLM is instructed to answer only from retrieved evidence.
-
-If sufficient evidence is not present, PolicyIQ returns:
-
-```text
-I could not find sufficient information in the provided documents.
-```
-
-This is a valid `200 OK` product response, not an API error.
-
----
-
-# Version History
-
-## V1 — Core Grounded RAG
-
-V1 established ingestion, cleaning, recursive chunking, embeddings, Chroma, dense retrieval, grounded generation, citations, and abstention.
-
-Strict expected-pair retrieval results:
+### V1 strict expected-evidence retrieval
 
 | K | Hit@K |
 |---:|---:|
@@ -151,30 +118,47 @@ Strict expected-pair retrieval results:
 
 ## V2 — Retrieval Optimization
 
-V2 added:
+V2 improved retrieval quality by adding:
 
-- BM25
-- hybrid retrieval
+- BM25 sparse retrieval
+- dense + sparse hybrid search
 - Reciprocal Rank Fusion
 - Jina reranking
 - query-expansion experiments
+- retrieval benchmarking
 
-Hybrid retrieval improved deeper recall, while reranking improved top-ranked evidence quality.
+Final runtime retrieval design:
 
-Query expansion was not made the default because it increased latency and sometimes introduced retrieval noise.
+```text
+Question
+   ↓
+Dense Top-10 + BM25 Top-10
+   ↓
+Reciprocal Rank Fusion
+   ↓
+Hybrid Top-10
+   ↓
+Jina Reranker
+   ↓
+Top-5 evidence
+```
+
+Query expansion was tested but not made the default because it added latency and could introduce retrieval noise.
 
 ---
 
-## V3 — End-to-End Reliability Evaluation
+## V3 — Reliability Evaluation
 
-Golden set: 24 questions
+V3 moved the project from "it seems to work" to measured end-to-end evaluation.
 
-- 7 exact
-- 7 semantic
-- 5 multi-document
-- 5 unanswerable
+A 24-question golden set was created:
 
-Frozen V3 quality:
+- 7 exact questions
+- 7 semantic questions
+- 5 multi-document questions
+- 5 unanswerable questions
+
+### Frozen V3 quality
 
 | Metric | Result |
 |---|---:|
@@ -184,33 +168,35 @@ Frozen V3 quality:
 | False refusals | 4 / 19 |
 | Answerable response rate | 15 / 19 |
 
-Frozen V3 latency:
+### Frozen V3 latency
 
 | Metric | Time |
 |---|---:|
 | Average | 104.93 s |
 | Median | 99.97 s |
 | P95 | 163.27 s |
-| Min | 68.40 s |
-| Max | 166.20 s |
+| Minimum | 68.40 s |
+| Maximum | 166.20 s |
 
-The reranker was the dominant bottleneck.
+The evaluation showed that reranking dominated end-to-end latency.
 
 ---
 
 ## V4 — Reliability & Performance Hardening
 
-V4 focused on performance and failure analysis without changing the overall RAG architecture.
+V4 focused on understanding and improving the real bottleneck rather than changing the whole architecture.
 
-Frozen V4 latency:
+The Jina reranker remained part of the retrieval design, while CPU execution was hardened and benchmarked again.
+
+### Frozen V4 latency
 
 | Metric | V3 | V4 |
 |---|---:|---:|
 | Average | 104.93 s | **21.75 s** |
 | Median | 99.97 s | **19.59 s** |
 | P95 | 163.27 s | **32.47 s** |
-| Min | 68.40 s | **15.20 s** |
-| Max | 166.20 s | **33.91 s** |
+| Minimum | 68.40 s | **15.20 s** |
+| Maximum | 166.20 s | **33.91 s** |
 
 Approximate median speedup:
 
@@ -218,44 +204,72 @@ Approximate median speedup:
 ~5.1x
 ```
 
-Frozen V4 quality:
+### Frozen V4 quality
 
 | Metric | Result |
 |---|---:|
-| Faithfulness | 1.93 / 2 |
-| Relevance | 1.474 / 2 |
+| Faithfulness | **1.93 / 2** |
+| Relevance | **1.474 / 2** |
 | Citation correctness | 14 PASS, 1 PARTIAL |
 | Citation completeness | 14 PASS, 1 PARTIAL |
-| Correct unanswerable refusals | 5 / 5 |
-| False refusals | 4 / 19 |
-| Answerable response rate | 15 / 19 |
+| Correct unanswerable refusals | **5 / 5** |
+| False refusals | **4 / 19** |
+| Answerable response rate | **15 / 19** |
 
-Important evaluation note: V3 and V4 faithfulness/citation denominators are not identical, so those quality changes should not be treated as perfectly controlled. Relevance uses the same 19-answerable-question denominator.
+### Important evaluation note
 
-A relaxed grounding prompt was explicitly rejected after it produced unsupported coverage answers in some runs.
+The V3 and V4 faithfulness/citation denominators are not identical, so those changes should not be treated as a perfectly controlled quality comparison. Relevance uses the same 19-answerable-question denominator.
+
+A more permissive generation prompt was also tested during V4. It sometimes produced unsupported coverage conclusions, so the experiment was rejected and the conservative grounding prompt was retained.
 
 ---
 
-## V5 — Production API & Serving Layer
+## V5 — Production API & Docker Serving
 
-V5 productionizes the frozen evaluated RAG layer.
+V5 froze the evaluated RAG intelligence layer and focused on serving it like a real backend.
 
 Added:
 
-- FastAPI
+- FastAPI application
 - Pydantic request/response models
 - `/api/v1/query`
-- startup preloading
 - `/health`
 - `/ready`
-- production-style error handling
-- API tests
-- Docker
+- startup model preloading
+- production-style exception handling
+- structured response timings
+- API test suite
 - portable runtime paths
+- Dockerized Linux backend
+- environment-based secret handling
 
-A single Docker run is not a replacement for the frozen V4 benchmark.
+### API verification
 
-Example V5 Docker observation:
+The V5 API test suite completed with:
+
+```text
+9 passed
+```
+
+A real end-to-end Docker request also successfully executed:
+
+```text
+Windows host
+    ↓
+Docker Linux container
+    ↓
+FastAPI
+    ↓
+Hybrid retrieval
+    ↓
+Jina reranker
+    ↓
+Hosted LLM
+    ↓
+Grounded answer + sources + timings
+```
+
+One observed Docker request took approximately:
 
 ```text
 Hybrid retrieval    ~0.09 s
@@ -264,7 +278,179 @@ LLM generation      ~1.09 s
 Total               ~38.02 s
 ```
 
-This is one containerized runtime observation only.
+This is a **single V5 container runtime observation**, not a replacement for the frozen V4 benchmark.
+
+---
+
+## V6 — User-Facing Product
+
+The final phase added the complete frontend experience over the frozen backend.
+
+Frontend stack:
+
+- React
+- Vite
+- modern CSS
+- native Fetch API
+
+The UI includes:
+
+- responsive landing/query experience
+- real-time API readiness status
+- natural-language question composer
+- example insurance prompts
+- long-running loading state
+- grounded answer presentation
+- source cards with document ID and PDF page
+- clickable source references
+- explicit abstention UI
+- error and retry states
+- expandable request timing diagnostics
+- mobile-friendly responsive layout
+
+The frontend communicates with the existing V5 API without modifying the evaluated RAG behavior.
+
+---
+
+# Architecture
+
+```mermaid
+flowchart TD
+    U[User] --> F[React + Vite Frontend]
+
+    F -->|GET /health| API[FastAPI]
+    F -->|GET /ready| API
+    F -->|POST /api/v1/query| API
+
+    API --> D[Dense Retrieval]
+    API --> B[BM25 Retrieval]
+
+    D --> RRF[Reciprocal Rank Fusion]
+    B --> RRF
+
+    RRF --> H[Hybrid Top-10]
+    H --> J[Jina Reranker v3]
+    J --> E[Top-5 Evidence Chunks]
+
+    E --> P[Grounded Prompt]
+    P --> L[Hosted LLM]
+
+    L --> A[Answer]
+    E --> S[Source Metadata]
+
+    A --> RESP[Structured API Response]
+    S --> RESP
+    RESP --> F
+```
+
+---
+
+# Technology Stack
+
+## AI / RAG
+
+- LangChain
+- Hugging Face
+- Sentence Transformers
+- `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`
+- Jina Reranker v3
+- Chroma
+- BM25
+- Reciprocal Rank Fusion
+
+## Backend
+
+- Python 3.12
+- FastAPI
+- Pydantic
+- Uvicorn
+- PyMuPDF
+- Pandas
+- NumPy
+
+## Frontend
+
+- React 18
+- Vite
+- JavaScript
+- CSS
+- Fetch API
+
+## Infrastructure / Engineering
+
+- Docker
+- Git / GitHub
+- Pytest
+- HTTPX
+- environment-based configuration
+- versioned evaluation artifacts
+- architecture decision records
+
+---
+
+# Corpus
+
+PolicyIQ uses **11 authentic public insurance documents**, including:
+
+- motor insurance policy documents,
+- a health insurance policy,
+- IRDAI regulations,
+- IRDAI circulars,
+- motor insurance FAQs,
+- motor insurance service-provider guidelines.
+
+The corpus is not synthetic.
+
+The document manifest stores metadata such as:
+
+```text
+document_id
+filename
+document_type
+issuer
+insurer
+product
+year
+category
+source_url
+```
+
+---
+
+# Retrieval Design
+
+## Dense Retrieval
+
+Embedding model:
+
+```text
+sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+```
+
+Configuration:
+
+- CPU inference
+- normalized embeddings
+- 384-dimensional vectors
+- Chroma persistence
+
+## Sparse Retrieval
+
+BM25 is built over the same cleaned and chunked corpus.
+
+## Fusion
+
+Dense and sparse candidates are merged with Reciprocal Rank Fusion.
+
+## Reranking
+
+Model:
+
+```text
+jinaai/jina-reranker-v3
+```
+
+The reranker receives the hybrid candidate set and selects the final passages used for generation.
 
 ---
 
@@ -275,6 +461,8 @@ This is one containerized runtime observation only.
 ```http
 GET /health
 ```
+
+Example:
 
 ```json
 {
@@ -289,6 +477,8 @@ GET /health
 ```http
 GET /ready
 ```
+
+Example:
 
 ```json
 {
@@ -342,9 +532,22 @@ Response shape:
 
 ```text
 Policy_IQ/
+│
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── lib/
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── styles.css
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── vite.config.js
+│   └── README.md
+│
 ├── src/
 │   ├── api/
-│   │   ├── __init__.py
 │   │   ├── main.py
 │   │   ├── schemas.py
 │   │   └── dependencies.py
@@ -353,16 +556,20 @@ Policy_IQ/
 │   ├── ingestion/
 │   ├── rag/
 │   └── retrieval/
+│
 ├── data/
 │   ├── raw/
 │   ├── processed/
 │   └── menifest.csv
+│
 ├── evaluation/
 │   ├── questions.json
 │   ├── rag_runs/
 │   └── reports/
+│
 ├── tests/
 │   └── api/
+│
 ├── docs/
 ├── config.py
 ├── requirements.txt
@@ -372,28 +579,25 @@ Policy_IQ/
 └── README.md
 ```
 
-`menifest.csv` is intentionally kept with its existing filename during V5 to avoid unnecessary unrelated changes.
+> `menifest.csv` is retained with its existing filename to preserve the established project structure.
 
 ---
 
-# Local Setup
+# Running PolicyIQ Locally
 
-## 1. Create and activate a virtual environment
+You need two terminals: one for the backend and one for the frontend.
+
+## 1. Backend setup
+
+From the project root:
 
 ```powershell
 python -m venv venv
 .\venv\Scripts\Activate.ps1
-```
-
-## 2. Install dependencies
-
-```powershell
 pip install -r requirements.txt
 ```
 
-## 3. Environment variables
-
-Create `.env`:
+Create a `.env` file:
 
 ```env
 HUGGINGFACEHUB_ACCESS_TOKEN=hf_your_token_here
@@ -402,10 +606,16 @@ HF_TOKEN=hf_your_token_here
 
 Never commit `.env`.
 
-## 4. Run FastAPI
+Start FastAPI:
 
 ```powershell
 uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+```
+
+Backend:
+
+```text
+http://localhost:8000
 ```
 
 Swagger:
@@ -416,15 +626,43 @@ http://localhost:8000/docs
 
 ---
 
-# Docker
+## 2. Frontend setup
 
-## Build
+Open a second terminal:
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend:
+
+```text
+http://localhost:5173
+```
+
+For local development, Vite proxies:
+
+```text
+/api
+/health
+/ready
+```
+
+to the FastAPI backend on port `8000`.
+
+---
+
+# Docker Backend
+
+Build:
 
 ```powershell
 docker build -t policyiq-backend:v5 .
 ```
 
-## Run
+Run:
 
 ```powershell
 docker run --name policyiq-v5 --env-file .env -p 8000:8000 policyiq-backend:v5
@@ -450,55 +688,40 @@ Remove:
 docker rm policyiq-v5
 ```
 
-Recreate:
-
-```powershell
-docker rm -f policyiq-v5
-docker run --name policyiq-v5 --env-file .env -p 8000:8000 policyiq-backend:v5
-```
-
----
-
-# Portable Runtime Paths
-
-Runtime paths are derived from the project root with `pathlib`.
-
-Conceptually:
-
-```python
-BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / "data"
-RAW_DATA_DIR = DATA_DIR / "raw"
-PROCESSED_DATA_DIR = DATA_DIR / "processed"
-MANIFEST_PATH = DATA_DIR / "menifest.csv"
-```
-
-This allows the same serving code to resolve correctly on both Windows and Linux/Docker.
+The Docker image currently covers the backend. The final frontend is run separately through Vite for local development.
 
 ---
 
 # Testing
 
-Run:
+Run API tests from the project root:
 
 ```powershell
-python -m pytest tests/api -v
+python -m pytest tests/api -q
 ```
 
-API tests cover:
+The final V5 API verification produced:
 
-- health
-- readiness
-- request validation
+```text
+9 passed
+```
+
+The API tests cover:
+
+- health behavior
+- readiness state
+- validation
 - successful query contract
 - abstention
 - internal service errors
 
-Heavy RAG evaluation is kept separate from lightweight API contract tests.
+Heavy RAG evaluation is intentionally separate from the lightweight API contract tests.
 
 ---
 
 # Error Semantics
+
+PolicyIQ distinguishes between insufficient evidence and system failure.
 
 ## Valid abstention
 
@@ -510,109 +733,182 @@ HTTP 200
 I could not find sufficient information in the provided documents.
 ```
 
-## Not ready
+## Service not ready
 
 ```text
 HTTP 503
 ```
 
-## Internal processing failure
+## Internal processing error
 
 ```text
 HTTP 500
 ```
 
-The public response is generic while the server logs the full traceback.
+The public API returns a generic failure message while the server retains the detailed traceback.
 
 ---
 
 # Startup Preloading
 
-PolicyIQ preloads:
+On startup, the serving layer preloads:
 
-- embedding model
-- vector store
-- BM25 corpus
-- Jina reranker
-- LLM client
+- embedding model,
+- Chroma vector store,
+- BM25 corpus,
+- Jina reranker,
+- LLM client.
 
-This removes initialization work from the first user request.
+This removes model initialization from the first user query.
 
-It does not remove the per-query CPU cost of reranking.
+It does **not** remove the per-query CPU reranking cost.
+
+---
+
+# Evaluation Philosophy
+
+PolicyIQ was built around measurement rather than visual inspection alone.
+
+The debugging model used throughout the project:
+
+```text
+Answer missing from chunks
+→ ingestion / chunking
+
+Answer exists but is not retrieved
+→ embedding / retrieval / ranking
+
+Correct evidence retrieved but answer is wrong
+→ generation / prompt / LLM
+
+No evidence but model answers
+→ grounding / abstention
+```
+
+Engineering principles:
+
+```text
+Build.
+Measure.
+Fail.
+Understand.
+Improve.
+Freeze.
+Repeat.
+```
+
+More specifically:
+
+- measure before optimizing,
+- freeze evaluated versions,
+- separate retrieval failures from generation failures,
+- do not loosen grounding merely to improve answer rate,
+- treat abstention as valid product behavior,
+- avoid changing the evaluated RAG core during productionization.
 
 ---
 
 # Known Limitations
 
-1. CPU reranking remains the largest latency bottleneck.
-2. Four answerable golden questions still produce false refusals: `Q003`, `Q004`, `Q008`, `Q018`.
-3. Fresh Docker containers may download Hugging Face model files during startup.
-4. Multiple Uvicorn workers are not recommended yet because each worker would load its own model copies.
-5. The live corpus contains documents added after the earliest expected-evidence design, so some valid evidence may exist outside the original golden expected pairs.
+- CPU reranking remains the main latency bottleneck.
+- Four answerable golden questions still produced false refusals in the frozen V4 evaluation: `Q003`, `Q004`, `Q008`, `Q018`.
+- Fresh Docker containers may need to download Hugging Face model files during startup.
+- Multiple Uvicorn workers would duplicate model memory and are not recommended for the current local CPU setup.
+- The live corpus contains documents added after the earliest golden expected-evidence design, so valid evidence can sometimes exist outside the original expected evidence pairs.
+- PolicyIQ is a document intelligence project, not a substitute for an insurer, regulator, legal professional, or the current policy wording applicable to a real claim.
 
 ---
 
-# Engineering Principles
+# Version History
 
 ```text
-Measure before optimizing.
-Freeze evaluated versions.
-Separate retrieval failures from generation failures.
-Do not loosen grounding just to increase answer rate.
-Treat abstention as valid product behavior.
-Do not modify the RAG core while productionizing the serving layer.
+V1  Core grounded RAG
+ ↓
+V2  Hybrid retrieval + reranking
+ ↓
+V3  End-to-end reliability evaluation
+ ↓
+V4  Performance + reliability hardening
+ ↓
+V5  FastAPI + tests + Docker backend
+ ↓
+V6  Complete user-facing React frontend
 ```
 
-Failure diagnosis:
+Frozen Git milestones include:
 
 ```text
-Answer missing from chunks
-→ ingestion/chunking
-
-Answer exists but is not retrieved
-→ embedding/retrieval/ranking
-
-Correct evidence retrieved but answer is wrong
-→ generation/prompt/LLM
-
-No evidence but model answers
-→ grounding/abstention
+v2.0
+v3.0
+v4.0
+v5.0
 ```
+
+V6 represents the final product-facing phase of PolicyIQ.
 
 ---
 
-# Git Milestones
+# Why This Project Was Built
 
-```text
-v1.0   Core grounded RAG
-v2.0   Retrieval optimization
-v3.0   Reliability evaluation
-v4.0   Reliability + performance hardening
-v5.0   Production API + Docker serving
-```
+The purpose of PolicyIQ was not to build another PDF chatbot.
 
-V4 should remain frozen as the evaluated reliability/performance milestone.
+The project was used to learn and demonstrate how a RAG system changes when it is treated as an engineering system instead of only an LLM demo:
 
-V5 development branch:
-
-```text
-v5-production-api
-```
-
----
-
-# Roadmap
-
-Potential V6:
-
-- LangGraph orchestration
-- tool-based policy lookup
-- controlled multi-step reasoning
-- policy comparison workflows
-- structured claim workflows
-
-LangGraph should only be added if it creates real product value.
+- ingestion quality matters,
+- chunking decisions matter,
+- retrieval must be measured,
+- top-ranked evidence matters more than raw vector similarity,
+- generation should be grounded,
+- abstention needs to be intentional,
+- latency needs stage-level profiling,
+- evaluation should survive across versions,
+- APIs need failure semantics,
+- models need startup lifecycle handling,
+- local code needs to work outside the original machine,
+- and a technical backend becomes much more useful once it has a clear product interface.
 
 ---
 
-PolicyIQ is a portfolio and engineering project focused on grounded enterprise-style RAG, evaluation, reliability analysis, API serving, and containerization.
+# Project Status
+
+## PolicyIQ is now frozen.
+
+The project reached the intended endpoint:
+
+```text
+Real insurance documents
+        ↓
+Evaluated RAG
+        ↓
+Hybrid retrieval
+        ↓
+Reranking
+        ↓
+Grounded generation
+        ↓
+Reliability benchmarking
+        ↓
+Production-style FastAPI
+        ↓
+Dockerized backend
+        ↓
+Complete React frontend
+```
+
+Future work in LangGraph, agentic AI, advanced RAG, orchestration, or new infrastructure will be explored in **new projects** rather than continuously expanding PolicyIQ.
+
+This keeps PolicyIQ as a clear record of one complete engineering journey from baseline RAG to a usable end-to-end product.
+
+---
+
+## Repository
+
+**GitHub:** [Atishaygang/PolicyIQ](https://github.com/Atishaygang/PolicyIQ)
+
+---
+
+## Author
+
+**Atishay Jain**
+
+Built as an applied AI engineering project focused on grounded RAG, retrieval evaluation, reliability analysis, backend serving, containerization, and product delivery.
