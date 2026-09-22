@@ -64,6 +64,9 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+@app.get('/')
+def start():
+    return 'welcome'
 
 # ==========================================
 # Health
